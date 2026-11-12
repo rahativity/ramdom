@@ -2,6 +2,8 @@ import React from 'react';
 import { ProgressIndicator } from './ProgressIndicator';
 import { SlideNavigation } from './SlideNavigation';
 import { SlideOverview } from './SlideOverview';
+import { AnimatedBackground } from './AnimatedBackground';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 import type { PresentationState } from '../../types/presentation';
 
 interface PresentationShellProps {
@@ -13,6 +15,8 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
   presentation,
   children,
 }) => {
+  const prefersReducedMotion = useReducedMotion();
+
   const {
     currentSlide,
     totalSlides,
@@ -27,40 +31,32 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
     setBeat,
     toggleFullscreen,
     toggleOverview,
+    closeOverview,
     toggleAutoPlay,
   } = presentation;
 
+  const effectiveAutoPlay = isAutoPlay && !prefersReducedMotion;
+
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-[#F8FAFF] flex flex-col justify-between select-none">
-      {/* Decorative Organic Blue Backdrops from Reference Image */}
-      <div 
-        className="pointer-events-none absolute -top-24 -right-24 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-[#2868E8]/10 via-[#2868E8]/5 to-transparent blur-3xl opacity-70"
-        aria-hidden="true" 
-      />
-      <div 
-        className="pointer-events-none absolute -bottom-36 -left-28 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#2868E8]/8 via-[#2868E8]/3 to-transparent blur-3xl opacity-60"
-        aria-hidden="true" 
-      />
+    <div className="relative w-full h-dvh min-h-dvh overflow-hidden bg-[#F8FAFF] flex flex-col justify-between select-none">
+      {/* Static Minimal Keynote Corner Accents */}
+      <AnimatedBackground currentSlide={currentSlide} />
 
       {/* Top Header Bar */}
-      <header className="relative z-20 flex items-center justify-between px-6 sm:px-10 pt-4 pb-1 shrink-0">
+      <header className="relative z-20 flex flex-wrap items-center justify-between gap-2 px-4 sm:px-8 lg:px-10 pt-3 sm:pt-4 pb-1 shrink-0">
         <ProgressIndicator
           currentSlide={currentSlide}
           totalSlides={totalSlides}
-          currentBeat={currentBeat}
-          maxBeats={slideConfig.maxBeats}
-          onSelectSlide={jumpToSlide}
         />
 
-        {/* Minimal top right icon shortcut for overview */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <SlideNavigation
             currentSlide={currentSlide}
             totalSlides={totalSlides}
             currentBeat={currentBeat}
             maxBeats={slideConfig.maxBeats}
             isFullscreen={isFullscreen}
-            isAutoPlay={isAutoPlay}
+            isAutoPlay={effectiveAutoPlay}
             onNext={next}
             onPrev={prev}
             onToggleFullscreen={toggleFullscreen}
@@ -71,21 +67,20 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
         </div>
       </header>
 
-      {/* Center 16:9 Presentation Stage Viewport */}
-      <main className="relative z-10 flex-1 w-full h-full flex items-center justify-center p-2 sm:p-3 lg:p-4 overflow-hidden">
-        <div className="relative w-full h-full max-w-[1440px] max-h-[810px] aspect-[16/9] flex items-center justify-center">
+      {/* Center 16:9 Presentation Stage Viewport (graceful scroll on small screens) */}
+      <main className="relative z-10 flex-1 min-h-0 w-full flex items-start lg:items-center justify-center px-4 sm:px-8 lg:px-10 py-2 sm:py-3 lg:py-4 overflow-y-auto overflow-x-hidden lg:overflow-hidden">
+        <div className="relative w-full min-h-full lg:min-h-0 lg:h-full max-w-[1440px] lg:max-h-[810px] lg:aspect-[16/9] flex items-center justify-center">
           {children}
         </div>
       </main>
 
-      {/* Slide Overview Modal */}
+      {/* Native <dialog> Slide Overview Modal */}
       <SlideOverview
         isOpen={isOverviewOpen}
         currentSlide={currentSlide}
         onSelectSlide={jumpToSlide}
-        onClose={toggleOverview}
+        onClose={closeOverview}
       />
     </div>
   );
 };
-

@@ -3,151 +3,102 @@
 
 ### 1. Motion Architecture Principles
 
-The motion design translates the mechanical logic of a central processing unit into fluid, intelligible visual motion.
+Every motion behavior communicates CPU state, bus transfer, or spatial context while remaining lightweight and accessible:
 
-- **Purpose-Driven Animation:** Every animation represents an actual physical or logical phenomenon (signal propagation, data bus transfer, latching, state transition).
-- **Dual Orchestration Model:**
-  - **GSAP 3 (`gsap`, `@gsap/react`):** Primary master timeline orchestrator for slide transitions, multi-stage CPU cycles, SVG path packet interpolation, and coordinated timeline scrubbing.
-  - **Motion (`motion`):** High-level React component mounts, UI hover interactions, button feedback states, and micro-dialog reveals.
-  - **Zero Collision Guarantee:** GSAP and Motion never bind to the same DOM nodes.
-- **Strict Performance Standards:** Animations operate strictly on hardware-composited properties (`transform`, `opacity`, `filter: blur`). No layout reflow properties (`top`, `left`, `width`, `height`, `margin`) are animated.
+- **Single JS Animation Engine:** **GSAP 3** (`gsap` and `gsap/MotionPathPlugin`) drives all slide transitions, staggered slide entrances, SVG packet interpolations, and side-rail circuit motion.
+  - *(Note: `motion` and `@gsap/react` are listed in `package.json` but are not imported anywhere in `src/`; no dual-engine collision exists.)*
+- **Native Modal & CSS Transitions:** Native `<dialog class="overview-dialog">` uses modern CSS `@starting-style` and `transition-behavior: allow-discrete` (`200ms ease-out` opacity/translate/backdrop blur), paired with concise Tailwind hover transitions on buttons and diagram highlights.
+- **Reduced-Motion First (`useReducedMotion`):** Every animated diagram, slide, shell control, and transition checks the live `(prefers-reduced-motion: reduce)` media query via `src/hooks/useReducedMotion.ts` (`useSyncExternalStore`).
 
 ---
 
-### 2. Global Slide Transitions
+### 2. Global Slide Transitions (`src/animations/transitions.ts` & `SlideRenderer.tsx`)
 
-Each transition between slides has an intentional spatial narrative that mirrors advancing through architectural abstractions.
+Direction-aware transitions invert spatial offsets cleanly on backward navigation (`direction === 'backward'`):
 
-| Transition | Transition Type | Visual Behavior | Duration | Easing |
+| Slides | Transition Type | Behavior | Duration | Easing |
 |---|---|---|---|---|
-| **01 → 02** | Soft Directional | Smooth leftward slide with progressive opacity blend | `750ms` | `power3.inOut` |
-| **02 → 03** | Horizontal Blur | Fast directional translation with temporary 4px dynamic blur | `750ms` | `power3.inOut` |
-| **03 → 04** | Controlled Mask Reveal | Radial or clip-path expansion revealing controller logic | `800ms` | `power3.inOut` |
-| **04 → 05** | Directional Split | Staggered two-column entrance reinforcing contrast | `700ms` | `power3.inOut` |
-| **05 → 06** | Connected Zoom | Camera zooms into the interconnected execution matrix (`scale: 0.95 → 1.0`) | `850ms` | `power3.inOut` |
-| **06 → 07** | Elegant Soft Fade | Quiet settling cross-fade with subtle upward lift | `750ms` | `power2.inOut` |
+| **01 → 02** | `soft-directional` | Horizontal directional slide (`x: ±60px → 0`, `opacity: 0 → 1`) | `750ms` | `power3.inOut` |
+| **02 → 03** | `horizontal-blur` | Fast translation (`x: ±120px → 0`) with momentary `6px` blur | `750ms` | `power3.inOut` |
+| **03 → 04** | `mask-reveal` | Circular `clipPath` reveal (`circle(10%) → circle(150%)`) | `862.5ms` (`1.15×`) | `power2.inOut` |
+| **04 → 05** | `directional-split` | Vertical lift & subtle scale (`y: ±35px → 0`, `scale: 0.98 → 1`) | `750ms` | `power3.inOut` |
+| **05 → 06** | `connected-zoom` | Spatial zoom (`scale: 0.94/1.04 → 1`, `y: ±20px → 0`) | `825ms` (`1.1×`) | `power3.out` |
+| **06 → 07** | `soft-fade` | Gentle cross-fade (`scale: 0.985 → 1`, `opacity: 0 → 1`) | `675ms` (`0.9×`) | `power2.out` |
 
-#### Reversible & Overlap-Safe Transition Protocol
-- If a user navigates backwards, the inverse spatial transformation is computed (`x: -100% → 0%`).
-- `isTransitioning` lock prevents concurrent or interrupted animations. All active GSAP tweens are safely killed upon unmount or interrupt.
-
----
-
-### 3. Slide Entrance Specification
-
-Standard entrance parameters applied to all slides upon mounting:
-
-```typescript
-export const entranceConfig = {
-  headline: {
-    y: 28,
-    opacity: 0,
-    duration: 0.65,
-    ease: "power3.out",
-  },
-  subtitle: {
-    y: 18,
-    opacity: 0,
-    duration: 0.55,
-    delay: 0.1,
-    ease: "power3.out",
-  },
-  diagramNodes: {
-    scale: 0.94,
-    opacity: 0,
-    duration: 0.6,
-    stagger: 0.08,
-    ease: "power2.out",
-  },
-  traces: {
-    strokeDashoffset: 100,
-    duration: 0.9,
-    ease: "power1.inOut",
-  }
-};
-```
+- **Interruption-Safe Navigation (`usePresentation.ts`):** `jumpToSlide()` cancels any active `transitionTimerRef` timeout instead of dropping rapid `Home`/`End` or dot-button clicks, while `SlideRenderer` cleans up prior GSAP timelines on unmount via `tl.kill()` and `gsap.set(..., { clearProps })`.
+- **Reduced Motion Fallback:** `SlideRenderer` bypasses `animateSlideTransition()` and runs a gentle `150ms` opacity fade (`power1.out`) on slide switches, clearing inline styles immediately on cleanup so elements never remain stuck at `opacity: 0`.
 
 ---
 
-### 4. Technical Diagram Animation Specifications
+### 3. Background & Side-Rail Motion Graphics (`AnimatedBackground.tsx`)
 
-#### Slide 01: Welcome
-1. **0.0s – 0.4s:** Soft background gradient expands (`opacity: 0 → 1`).
-2. **0.2s – 0.8s:** 2.5D CPU die floats into center (`y: 40px → 0px`, `opacity: 0 → 1`).
-3. **0.5s – 1.2s:** Circuit interconnect traces draw outward (`strokeDashoffset` from 1000 to 0).
-4. **0.7s – 1.1s:** Headline reveals with clean character/word stagger.
-5. **1.1s+:** Subtle ambient idle breathing on CPU glow (`y: -4px ↔ 4px`, 4s loop).
+When on desktop (`min-width: 1024px`) and `prefers-reduced-motion` is false:
 
-#### Slide 02: Architecture Overview
-1. **0.0s – 0.5s:** Unified CPU block manifests.
-2. **0.5s – 1.0s:** A clean dividing vector splits the chip into Data Path (left) and Controller (right).
-3. **1.0s – 1.6s:** Shared bus channels between the two halves ignite with electric blue pulses.
+1. **Node Reveal (`.bg-node-left`, `.bg-node-right`):** Scale `0.72 → 1` and opacity `0 → 1` (`0.65s`, `0.08s` stagger, `back.out(1.4)`), clearing `scale` upon completion.
+2. **Trace Drawing (`.bg-trace-left`, `.bg-trace-right`):** Orthogonal `pathLength={100}` bus traces draw via `strokeDashoffset: 100 → 0` (`1.25s`, `0.08s` stagger, `power2.inOut`).
+3. **Ambient Levitation (`.bg-float`):** Micro-chip modules and geometric accents float smoothly (`y: '-=6'`, `3.2s`, `sine.inOut`, infinite yoyo). Nested `<g transform="translate(...) rotate(45)">` wrappers isolate static SVG rotation/position from GSAP transforms.
+4. **Junction Halos (`.bg-pulse`):** Pulsing radial halos (`scale: 1 → 1.45`, `opacity → 0.45`, `2.1s`, `sine.inOut`, infinite yoyo).
+5. **Bus Packet Pulses (`.bg-packet`):** Three glowing packets per side rail travel continuously along `#busA` (`6.5s` loop, offsets `0.15` & `0.65`) and `#busB` (`5.2s` loop, offset `0.4`) via `MotionPathPlugin` (`ease: 'none'`, `repeat: -1`).
+6. **Zero Missing Target Guarantee:** `animateIfPresent()` queries `rootRef` before scheduling any tween; packet groups only mount when `!prefersReducedMotion`.
 
-#### Slide 03: Data Path Execution (`5 + 3 = 8`)
-1. **Beat 1 (Input Stage):** Input badges `5` and `3` appear and illuminate.
-2. **Beat 2 (Bus Travel to Registers):** Packets glide along SVG curve into registers R2 and R3; registers illuminate with `#2868E8`.
-3. **Beat 3 (ALU Compute):** Operands stream from R2 and R3 into ALU inputs; ALU core pulses with computation ripple (`scale: 1.05`, glow).
-4. **Beat 4 (Output Latch):** ALU emits result packet `8`, which flows along the output bus to destination register R1.
+---
 
-#### Slide 04: Controller Signal Propagation
-1. **Beat 1 (Fetch Opcode):** Instruction hex `ADD 0x01` enters instruction register.
-2. **Beat 2 (Decoder Activation):** Decoder matrix lights up; microcode branches.
-3. **Beat 3 (Signal Broadcast):** Distinct control signals (`RegRead`, `ALUOp[ADD]`, `RegWrite`) shoot along dedicated copper-colored and electric blue traces toward the datapath interface.
+### 4. Slide & Hardware Diagram Choreography
 
-#### Slide 05: Key Differences Comparison
-1. **0.0s – 0.4s:** Two-column card container smoothly fades in.
-2. **0.4s – 1.0s:** Rows reveal in sequential pairs (Data Path row vs Controller row) with 100ms stagger.
-3. **1.0s – 1.5s:** Digital balance scale balances into equilibrium with subtle damping spring (`tension: 180, friction: 12`).
+#### Slide 01 (`Slide01Welcome.tsx` & `CPUArchitecture.tsx`)
+- Staggered entrance for badge, headline lines, subtitle, CTA button, topic highlights, and floating 2.5D CPU die (`~1.05s` total).
+- `CPUArchitecture` loops `.trace-pulse` (`strokeDashoffset: -40`, `2.2s`) and `.chip-float` (`y: -6`, `3s`, `yoyo: true`).
 
-#### Slide 06: Master Coordinated Cycle (`ADD R1, R2, R3`)
-The presentation centerpiece. Features 4 interactive or auto-advancing beats:
-- **Beat 1: FETCH**
-  - PC / Bus emits instruction address.
-  - Instruction Register (IR) latches `ADD R1, R2, R3`.
-  - Status chip displays: `FETCH: IR ← MEM[PC]`.
-- **Beat 2: DECODE**
-  - IR passes opcode bits to Controller.
-  - Controller decodes opcode: Identifies ALU operation (`ADD`), source registers (`R2`, `R3`), and destination (`R1`).
-  - Control lines ignite: `RegRead = 1`, `ALUOp = ADD`.
-  - Status chip displays: `DECODE: Control lines armed`.
-- **Beat 3: EXECUTE**
-  - Register File outputs value `5` (from R2) and value `3` (from R3).
-  - Values flow simultaneously into ALU Input A and Input B.
-  - ALU executes addition: `5 + 3 → 8`.
-  - Status chip displays: `EXECUTE: ALU Result = 8`.
-- **Beat 4: WRITE BACK**
-  - Control line `RegWrite = 1` pulses.
-  - Value `8` travels along the Write-Back Bus into Register File.
-  - R1 updates from `0` to `8` with a crisp numerical counter tick.
-  - Status chip displays: `WRITE BACK: R1 ← 8 Complete`.
+#### Slide 02 (`Slide02Overview.tsx`) — `3 Beats (0..2)`
+- Beat `0`: Both planes illuminated (`Active: Coordinated Dual Planes`).
+- Beat `1`: Data Path card & left die half emphasized (`Focus: Data Path Plane`).
+- Beat `2`: Controller card & right die half emphasized (`Focus: Controller Plane`).
 
-#### Slide 07: Thank You & Closing
-1. **0.0s – 0.6s:** Central CPU mascot/die settles into place with gentle deceleration.
-2. **0.5s – 1.0s:** Circuit tracks radiate with soft ambient breathing.
-3. **0.8s – 1.2s:** "Thank You!" and "Any Questions?" reveal cleanly.
+#### Slide 03 (`Slide03DataPath.tsx` & `DataPathDiagram.tsx`) — `4 Beats (0..3)`
+- **Beat 0 (`Step 0/3`):** Input A (`5`) and Input B (`3`) ready.
+- **Beat 1 (`Step 1/3`):** `.packet-in-a` and `.packet-in-b` travel horizontally (`x: 125 → 235`, `0.65s`) into Registers `R2=5` and `R3=3`.
+- **Beat 2 (`Step 2/3`):** `.packet-reg-a` and `.packet-reg-b` stream from `R2`/`R3` along the bent Register→ALU wires (`x: 346 → 435 → 456`) into ALU inputs while `.alu-glow` pulses around `transformOrigin: 'center center'` (`scale: 1 → 1.05`).
+- **Beat 3 (`Step 3/3`):** `.packet-out` (`x: 580 → 681`) and `.packet-out-final` (`x: 790 → 848`) travel from ALU → `Register R1 (8)` → `Output (8)`.
+
+#### Slide 04 (`Slide04Controller.tsx` & `ControllerDiagram.tsx`) — `3 Beats (0..2)`
+- **Beat 0 (`Step 1/3`):** Instruction `ADD R1, R2, R3` ready.
+- **Beat 1 (`Step 2/3`):** Decoder latches `Opcode: 0x01`, Control Unit activates, timing feedback loop illuminates.
+- **Beat 2 (`Step 3/3`):** Signal buses (`RegRead = 1`, `ALUOp = ADD`, `RegWrite = 1`) fire into target blocks (`x=762`) with continuous `.signal-pulse` loops (`strokeDashoffset: -32`, `1.4s`).
+
+#### Slide 05 (`Slide05Comparison.tsx`) — `1 Beat`
+- Sequential pair reveal for the 5 comparison rows (`0.24s`, `0.05s` stagger) paired with `.scale-beam` (`rotation: -3.2 → 0`, `svgOrigin: '140 32'`, `elastic.out(1, 0.48)`, `0.85s`) and synchronized pan settling (`.scale-pan-left` / `.scale-pan-right`).
+
+#### Slide 06 (`Slide06WorkingTogether.tsx` & `InstructionCycle.tsx`) — `4 Beats (0..3)`
+- **Beat 0 (`1. FETCH`):** Instruction Register highlighted; Beat 0 skips `.active-bus-pulse` tweens cleanly (0 console warnings).
+- **Beat 1 (`2. DECODE`):** Controller activates (`DECODE: ADD ACTIVE`); `RegRead = 1` control bus pulses from `y=136` to Register File (`R2=5`, `R3=3`).
+- **Beat 2 (`3. EXECUTE`):** `ALUOp = ADD` touches ALU top slope (`y=211`); operand wires from `R2` (`y=227`) and `R3` (`y=259`) stream to ALU (`5 + 3 = 8`).
+- **Beat 3 (`4. WRITE BACK`):** Write-Back bus (`ALU → R1`) pulses; `R1 (Dest)` updates from `0` to `8`.
+
+#### Slide 07 (`Slide07ThankYou.tsx`) — `1 Beat`
+- Tight overlapped entrance timeline (`~0.80s` total completion: chip `0.0s`, title `0.15s`, subtitle `0.25s`, replay button `0.35s` + `0.40s` = `0.75s`, summary capsules `0.45s` + `0.35s` = `0.80s`).
 
 ---
 
 ### 5. Presenter Controls & Keyboard Mapping
 
-| Key Trigger | Presentation Action |
-|---|---|
-| `ArrowRight` / `Space` | Next stage beat; if at last beat, advance to next slide |
-| `ArrowLeft` | Previous stage beat; if at beat 0, return to previous slide |
-| `Home` | Jump to Slide 01 |
-| `End` | Jump to Slide 07 |
-| `KeyF` / Double Click | Toggle standard browser fullscreen |
-| `Escape` | Exit fullscreen |
-
-*Note:* All keyboard shortcuts operate silently with zero on-screen instructional clutter.
+| Input Trigger | Action | Guard / Notes |
+|---|---|---|
+| `ArrowRight` / `Space` | Advance beat, or move to next slide at final beat | Ignored while `<dialog>` Slide Overview is open |
+| `ArrowLeft` | Previous beat, or move to previous slide at beat 0 | Ignored while `<dialog>` Slide Overview is open |
+| `Home` | Jump to Slide `01` | Ignored while `<dialog>` Slide Overview is open |
+| `End` | Jump to Slide `07` | Ignored while `<dialog>` Slide Overview is open |
+| `KeyF` | Toggle browser fullscreen (via `fullscreenchange` listener) | Ignored while `<dialog>` Slide Overview is open |
+| `KeyO` | Toggle Slide Overview `<dialog>` | Works globally (excluding `<input>`/`<textarea>`) |
+| `Escape` | Close Slide Overview `<dialog>` (native) or exit fullscreen (browser) | Native `<dialog>` cancel/close handler syncs React state |
+| Auto-Play | Advances multi-beat stages every `2400ms` (`App.tsx`) | Paused automatically when `prefers-reduced-motion: reduce` |
 
 ---
 
-### 6. Accessibility & Reduced Motion Protocol
+### 6. Accessibility & Reduced-Motion Protocol
 
-When `prefers-reduced-motion: reduce` is detected:
-1. All directional slide sliding and zoom transforms are bypassed; replaced with instant or gentle 150ms opacity fades.
-2. SVG path motion is replaced with instant state snapshots.
-3. Looping idle glows are paused.
-4. Numerical counter animations snap directly to final values (`5 + 3 = 8`).
-
+When `(prefers-reduced-motion: reduce)` matches:
+1. `App.tsx` disables the `2400ms` auto-play beat timer and `PresentationShell` reflects paused playback (`Play Auto Animation`).
+2. `SlideRenderer.tsx` replaces sliding/blur/zoom transitions with a `150ms` opacity crossfade.
+3. All 7 slides and 4 diagrams immediately `gsap.set(...)` animated selectors to `opacity: 1` and neutral transforms, bypassing infinite floats, packet loops, and pulse tweens.
+4. `AnimatedBackground.tsx` renders static side rails without `.bg-packet` nodes or GSAP loops.
+5. `index.css` disables `.overview-dialog` CSS transitions and transforms inside `@media (prefers-reduced-motion: reduce)`.

@@ -2,6 +2,15 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { SLIDE_CONFIGS } from '../animations/motionConfig';
 import type { TransitionDirection, PresentationState } from '../types/presentation';
 
+function getTransitionLockMs(): number {
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return 160;
+    }
+  }
+  return 750;
+}
+
 export function usePresentation(): PresentationState {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [currentBeat, setCurrentBeat] = useState<number>(0);
@@ -15,7 +24,7 @@ export function usePresentation(): PresentationState {
   const slideConfig = SLIDE_CONFIGS[currentSlide];
   const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Ref to track latest state for event listeners
+  // Ref to track latest state for event listeners and rapid navigation
   const stateRef = useRef({
     currentSlide,
     currentBeat,
@@ -43,111 +52,150 @@ export function usePresentation(): PresentationState {
     };
   }, []);
 
-  // Jump to specific slide (guarded against concurrent transitions)
-  const jumpToSlide = useCallback((index: number) => {
-    if (stateRef.current.isTransitioning) return;
-    if (index < 0 || index >= totalSlides || index === stateRef.current.currentSlide) {
-      return;
-    }
-
+  const startTransitionLock = useCallback(() => {
     if (transitionTimerRef.current) {
       clearTimeout(transitionTimerRef.current);
     }
-
-    const newDir: TransitionDirection = index > stateRef.current.currentSlide ? 'forward' : 'backward';
-    setDirection(newDir);
+    stateRef.current.isTransitioning = true;
     setIsTransitioning(true);
-    setCurrentSlide(index);
-    setCurrentBeat(0);
-    setIsOverviewOpen(false);
-
     transitionTimerRef.current = setTimeout(() => {
+      transitionTimerRef.current = null;
+      stateRef.current.isTransitioning = false;
       setIsTransitioning(false);
-    }, 750);
-  }, [totalSlides]);
+    }, getTransitionLockMs());
+  }, []);
+
+  // Jump to specific slide (interrupts active transition cleanly instead of dropping clicks/Home/End)
+  const jumpToSlide = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= totalSlides) {
+        return;
+      }
+
+      stateRef.current.isOverviewOpen = false;
+      setIsOverviewOpen(false);
+
+      if (index === stateRef.current.currentSlide) {
+        return;
+      }
+
+      const newDir: TransitionDirection =
+        index > stateRef.current.currentSlide ? 'forward' : 'backward';
+
+      stateRef.current.currentSlide = index;
+      stateRef.current.currentBeat = 0;
+      stateRef.current.slideConfig = SLIDE_CONFIGS[index];
+
+      setDirection(newDir);
+      setCurrentSlide(index);
+      setCurrentBeat(0);
+      startTransitionLock();
+    },
+    [totalSlides, startTransitionLock]
+  );
 
   // Next action (advances beat, or advances slide)
   const next = useCallback(() => {
-    const { currentSlide: curSlide, currentBeat: curBeat, slideConfig: cfg, isTransitioning: isTrans } = stateRef.current;
+    const {
+      currentSlide: curSlide,
+      currentBeat: curBeat,
+      slideConfig: cfg,
+      isTransitioning: isTrans,
+    } = stateRef.current;
     if (isTrans) return;
 
     if (curBeat < cfg.maxBeats - 1) {
-      setCurrentBeat((b) => b + 1);
+      const nextBeatIndex = curBeat + 1;
+      stateRef.current.currentBeat = nextBeatIndex;
+      setCurrentBeat(nextBeatIndex);
     } else if (curSlide < totalSlides - 1) {
-      if (transitionTimerRef.current) {
-        clearTimeout(transitionTimerRef.current);
-      }
+      const nextSlideIndex = curSlide + 1;
+      stateRef.current.currentSlide = nextSlideIndex;
+      stateRef.current.currentBeat = 0;
+      stateRef.current.slideConfig = SLIDE_CONFIGS[nextSlideIndex];
       setDirection('forward');
-      setIsTransitioning(true);
-      setCurrentSlide((s) => s + 1);
+      setCurrentSlide(nextSlideIndex);
       setCurrentBeat(0);
-      transitionTimerRef.current = setTimeout(() => {
-        setIsTransitioning(false);
-      }, 750);
+      startTransitionLock();
     }
-  }, [totalSlides]);
+  }, [totalSlides, startTransitionLock]);
 
   // Prev action (decreases beat, or retreats slide)
   const prev = useCallback(() => {
-    const { currentSlide: curSlide, currentBeat: curBeat, isTransitioning: isTrans } = stateRef.current;
+    const {
+      currentSlide: curSlide,
+      currentBeat: curBeat,
+      isTransitioning: isTrans,
+    } = stateRef.current;
     if (isTrans) return;
 
     if (curBeat > 0) {
-      setCurrentBeat((b) => b - 1);
+      const prevBeatIndex = curBeat - 1;
+      stateRef.current.currentBeat = prevBeatIndex;
+      setCurrentBeat(prevBeatIndex);
     } else if (curSlide > 0) {
-      if (transitionTimerRef.current) {
-        clearTimeout(transitionTimerRef.current);
-      }
       const prevSlideIndex = curSlide - 1;
       const prevSlideConfig = SLIDE_CONFIGS[prevSlideIndex];
+      const prevMaxBeat = prevSlideConfig.maxBeats - 1;
+      stateRef.current.currentSlide = prevSlideIndex;
+      stateRef.current.currentBeat = prevMaxBeat;
+      stateRef.current.slideConfig = prevSlideConfig;
       setDirection('backward');
-      setIsTransitioning(true);
       setCurrentSlide(prevSlideIndex);
-      setCurrentBeat(prevSlideConfig.maxBeats - 1);
-      transitionTimerRef.current = setTimeout(() => {
-        setIsTransitioning(false);
-      }, 750);
+      setCurrentBeat(prevMaxBeat);
+      startTransitionLock();
     }
-  }, []);
+  }, [startTransitionLock]);
 
   const nextBeat = useCallback(() => {
     const { currentBeat: curBeat, slideConfig: cfg } = stateRef.current;
     if (curBeat < cfg.maxBeats - 1) {
-      setCurrentBeat((b) => b + 1);
+      const nextBeatIndex = curBeat + 1;
+      stateRef.current.currentBeat = nextBeatIndex;
+      setCurrentBeat(nextBeatIndex);
     }
   }, []);
 
   const prevBeat = useCallback(() => {
     if (stateRef.current.currentBeat > 0) {
-      setCurrentBeat((b) => b - 1);
+      const prevBeatIndex = stateRef.current.currentBeat - 1;
+      stateRef.current.currentBeat = prevBeatIndex;
+      setCurrentBeat(prevBeatIndex);
     }
   }, []);
 
   const setBeat = useCallback((beatIndex: number) => {
     const cfg = stateRef.current.slideConfig;
     if (beatIndex >= 0 && beatIndex < cfg.maxBeats) {
+      stateRef.current.currentBeat = beatIndex;
       setCurrentBeat(beatIndex);
     }
   }, []);
 
   const toggleOverview = useCallback(() => {
-    setIsOverviewOpen((prev) => !prev);
+    setIsOverviewOpen((prevOpen) => {
+      const nextOpen = !prevOpen;
+      stateRef.current.isOverviewOpen = nextOpen;
+      return nextOpen;
+    });
   }, []);
 
+  const closeOverview = useCallback(() => {
+    stateRef.current.isOverviewOpen = false;
+    setIsOverviewOpen(false);
+  }, []);
+
+  // Rely solely on fullscreenchange event listener (never optimistic state writes)
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
-      setIsFullscreen(true);
+      document.documentElement.requestFullscreen?.().catch(() => {});
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      }
-      setIsFullscreen(false);
+      document.exitFullscreen?.().catch(() => {});
     }
   }, []);
 
   const toggleAutoPlay = useCallback(() => {
-    setIsAutoPlay((prev) => !prev);
+    setIsAutoPlay((prevAuto) => !prevAuto);
   }, []);
 
   // Sync fullscreen change events
@@ -164,42 +212,43 @@ export function usePresentation(): PresentationState {
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore when focusing input or textarea
-      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) {
+      const tagName = (e.target as HTMLElement | null)?.tagName;
+      if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
         return;
       }
+
+      const overviewOpen = stateRef.current.isOverviewOpen;
 
       switch (e.code) {
         case 'ArrowRight':
         case 'Space':
+          if (overviewOpen) return;
           e.preventDefault();
           next();
           break;
         case 'ArrowLeft':
+          if (overviewOpen) return;
           e.preventDefault();
           prev();
           break;
         case 'Home':
+          if (overviewOpen) return;
           e.preventDefault();
           jumpToSlide(0);
           break;
         case 'End':
+          if (overviewOpen) return;
           e.preventDefault();
           jumpToSlide(totalSlides - 1);
           break;
         case 'KeyF':
+          if (overviewOpen) return;
           e.preventDefault();
           toggleFullscreen();
           break;
         case 'KeyO':
           e.preventDefault();
           toggleOverview();
-          break;
-        case 'Escape':
-          if (stateRef.current.isOverviewOpen) {
-            e.preventDefault();
-            setIsOverviewOpen(false);
-          }
           break;
         default:
           break;
@@ -229,6 +278,7 @@ export function usePresentation(): PresentationState {
     nextBeat,
     prevBeat,
     toggleOverview,
+    closeOverview,
     toggleFullscreen,
     toggleAutoPlay,
   };

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import gsap from 'gsap';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 interface ControllerDiagramProps {
   currentBeat?: number; // 0..2
@@ -14,23 +15,32 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const activeBeat = currentBeat;
+  const reducedMotion = useReducedMotion();
+  const uid = useId().replace(/:/g, '');
+
+  const controllerNavyId = `controllerNavy-${uid}`;
+  const cardGradId = `ctrlCardGrad-${uid}`;
+  const glowSignalId = `glowSignal-${uid}`;
 
   useEffect(() => {
     if (!containerRef.current) return;
+    if (reducedMotion || activeBeat < 2) return;
+
+    const pulses = containerRef.current.querySelectorAll('.signal-pulse');
+    if (pulses.length === 0) return;
+
     const ctx = gsap.context(() => {
-      if (activeBeat >= 2) {
-        gsap.to('.signal-pulse', {
-          strokeDashoffset: -32,
-          repeat: -1,
-          duration: 1.4,
-          ease: 'none',
-          stagger: 0.2,
-        });
-      }
+      gsap.to(pulses, {
+        strokeDashoffset: -32,
+        repeat: -1,
+        duration: 1.4,
+        ease: 'none',
+        stagger: 0.2,
+      });
     }, containerRef);
 
     return () => ctx.revert();
-  }, [activeBeat]);
+  }, [activeBeat, reducedMotion]);
 
   return (
     <div
@@ -38,21 +48,21 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
       className={`relative w-full flex flex-col items-center justify-center ${className}`}
     >
       <svg
-        viewBox="20 40 890 255"
+        viewBox="20 40 890 245"
         className="w-full h-auto drop-shadow-sm select-none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="controllerNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={controllerNavyId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#1E3E6F" />
             <stop offset="100%" stopColor="#102A50" />
           </linearGradient>
-          <linearGradient id="cardGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id={cardGradId} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#FFFFFF" />
             <stop offset="100%" stopColor="#F4F8FF" />
           </linearGradient>
-          <filter id="glowSignal" x="-20%" y="-20%" width="140%" height="140%">
+          <filter id={glowSignalId} x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
@@ -61,104 +71,119 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
         {/* --- HORIZONTAL INSTRUCTION INPUT PIPELINE --- */}
         {/* Connection from Instruction to Decoder */}
         <path
-          d="M 185 125 L 260 125"
+          d="M 185 126 L 260 126"
           stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
           strokeWidth="3.5"
-          strokeOpacity={activeBeat >= 1 ? '1' : '0.2'}
+          strokeOpacity={activeBeat >= 1 ? '1' : '0.25'}
         />
         <polygon
-          points="258,120 268,125 258,130"
+          points="258,121 268,126 258,131"
           fill={activeBeat >= 1 ? '#2868E8' : '#102A50'}
-          opacity={activeBeat >= 1 ? '1' : '0.3'}
+          opacity={activeBeat >= 1 ? '1' : '0.35'}
         />
 
         {/* Connection from Decoder to Control Unit */}
         <path
-          d="M 390 125 L 465 125"
+          d="M 390 126 L 467 126"
           stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
           strokeWidth="3.5"
-          strokeOpacity={activeBeat >= 1 ? '1' : '0.2'}
+          strokeOpacity={activeBeat >= 1 ? '1' : '0.25'}
         />
         <polygon
-          points="463,120 473,125 463,130"
+          points="465,121 475,126 465,131"
           fill={activeBeat >= 1 ? '#2868E8' : '#102A50'}
-          opacity={activeBeat >= 1 ? '1' : '0.3'}
+          opacity={activeBeat >= 1 ? '1' : '0.35'}
         />
 
-        {/* --- CONTROL SIGNAL BUSES RADIATING FROM CONTROL UNIT --- */}
-        {/* Signal 1: RegRead */}
+        {/* --- CONTROL SIGNAL BUSES RADIATING FROM CONTROL UNIT TO TARGET BOXES (x=762) --- */}
+        {/* Signal 1: RegRead (center y=74) */}
         <path
-          d="M 625 105 L 705 105 L 755 75"
+          d="M 625 104 L 696 104 L 732 74 L 754 74"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
           strokeWidth="3"
           strokeOpacity={activeBeat >= 2 ? '1' : '0.25'}
         />
-        {activeBeat >= 2 && (
+        {activeBeat >= 2 && !reducedMotion && (
           <path
-            d="M 625 105 L 705 105 L 755 75"
+            d="M 625 104 L 696 104 L 732 74 L 754 74"
             stroke="#6CA1FF"
             strokeWidth="3.5"
             strokeDasharray="8 16"
             className="signal-pulse"
-            filter="url(#glowSignal)"
+            filter={`url(#${glowSignalId})`}
           />
         )}
+        <polygon
+          points="752,69 762,74 752,79"
+          fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
+          opacity={activeBeat >= 2 ? '1' : '0.35'}
+        />
 
-        {/* Signal 2: ALUOp */}
+        {/* Signal 2: ALUOp (center y=126) */}
         <path
-          d="M 625 125 L 755 125"
+          d="M 625 126 L 754 126"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
           strokeWidth="3"
           strokeOpacity={activeBeat >= 2 ? '1' : '0.25'}
         />
-        {activeBeat >= 2 && (
+        {activeBeat >= 2 && !reducedMotion && (
           <path
-            d="M 625 125 L 755 125"
+            d="M 625 126 L 754 126"
             stroke="#6CA1FF"
             strokeWidth="3.5"
             strokeDasharray="8 16"
             className="signal-pulse"
-            filter="url(#glowSignal)"
+            filter={`url(#${glowSignalId})`}
           />
         )}
+        <polygon
+          points="752,121 762,126 752,131"
+          fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
+          opacity={activeBeat >= 2 ? '1' : '0.35'}
+        />
 
-        {/* Signal 3: RegWrite */}
+        {/* Signal 3: RegWrite (center y=178) */}
         <path
-          d="M 625 145 L 705 145 L 755 175"
+          d="M 625 148 L 696 148 L 732 178 L 754 178"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
           strokeWidth="3"
           strokeOpacity={activeBeat >= 2 ? '1' : '0.25'}
         />
-        {activeBeat >= 2 && (
+        {activeBeat >= 2 && !reducedMotion && (
           <path
-            d="M 625 145 L 705 145 L 755 175"
+            d="M 625 148 L 696 148 L 732 178 L 754 178"
             stroke="#6CA1FF"
             strokeWidth="3.5"
             strokeDasharray="8 16"
             className="signal-pulse"
-            filter="url(#glowSignal)"
+            filter={`url(#${glowSignalId})`}
           />
         )}
+        <polygon
+          points="752,173 762,178 752,183"
+          fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
+          opacity={activeBeat >= 2 ? '1' : '0.35'}
+        />
 
         {/* Feedback / Timing Clock Loop to Controller */}
         <path
-          d="M 545 180 L 545 255 L 325 255 L 325 168"
+          d="M 550 179.5 L 550 248 L 329 248 L 329 172"
           stroke="#2868E8"
           strokeWidth="2.5"
           strokeDasharray="6 4"
-          strokeOpacity={activeBeat >= 1 ? '0.7' : '0.2'}
+          strokeOpacity={activeBeat >= 1 ? '0.75' : '0.25'}
         />
         <polygon
-          points="320,170 325,160 330,170"
+          points="324,174 329,164 334,174"
           fill="#2868E8"
-          opacity={activeBeat >= 1 ? '0.85' : '0.3'}
+          opacity={activeBeat >= 1 ? '0.9' : '0.35'}
         />
         <text
-          x="435"
-          y="275"
+          x="440"
+          y="269"
           textAnchor="middle"
           fill="#102A50"
-          fillOpacity="0.65"
+          fillOpacity="0.75"
           fontSize="12"
           fontWeight="500"
           fontFamily="JetBrains Mono, monospace"
@@ -166,7 +191,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
           Timing & Step Feedback Loop
         </text>
 
-        {/* --- BLOCK 1: INSTRUCTION INPUT (Enlarged) --- */}
+        {/* --- BLOCK 1: INSTRUCTION INPUT --- */}
         <g id="instruction-input">
           <rect
             x="35"
@@ -174,7 +199,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             width="150"
             height="72"
             rx="16"
-            fill="url(#cardGrad2)"
+            fill={`url(#${cardGradId})`}
             stroke={activeBeat >= 0 ? '#2868E8' : 'rgba(40, 104, 232, 0.25)'}
             strokeWidth="1.8"
           />
@@ -193,7 +218,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             x="110"
             y="142"
             textAnchor="middle"
-            fill="#2868E8"
+            fill="#1B54C7"
             fontSize="14"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
@@ -211,7 +236,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             height="76"
             rx="16"
             fill={activeBeat >= 1 ? '#FFFFFF' : '#F8FAFF'}
-            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
+            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.25)'}
             strokeWidth={activeBeat >= 1 ? '2.2' : '1.5'}
           />
           <text
@@ -229,7 +254,8 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             x="329"
             y="141"
             textAnchor="middle"
-            fill={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.4)'}
+            fill={activeBeat >= 1 ? '#1B54C7' : '#102A50'}
+            fillOpacity={activeBeat >= 1 ? '1' : '0.72'}
             fontSize="11"
             fontWeight="600"
             fontFamily="JetBrains Mono, monospace"
@@ -246,7 +272,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             width="150"
             height="106"
             rx="18"
-            fill="url(#controllerNavy)"
+            fill={`url(#${controllerNavyId})`}
             stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
             strokeWidth="3"
           />
@@ -266,7 +292,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             x="550"
             y="140"
             textAnchor="middle"
-            fill="#94BDFF"
+            fill="#DBEAFE"
             fontSize="11"
             fontWeight="600"
             fontFamily="Inter, sans-serif"
@@ -278,7 +304,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             cx="606"
             cy="90"
             r="4.5"
-            fill={activeBeat >= 1 ? '#2868E8' : 'rgba(255, 255, 255, 0.3)'}
+            fill={activeBeat >= 1 ? '#2868E8' : 'rgba(255, 255, 255, 0.35)'}
           />
         </g>
 
@@ -292,14 +318,14 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             height="44"
             rx="12"
             fill={activeBeat >= 2 ? '#FFFFFF' : '#F8FAFF'}
-            stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
+            stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.25)'}
             strokeWidth={activeBeat >= 2 ? '2.2' : '1.2'}
           />
           <text
             x="829"
             y="79"
             textAnchor="middle"
-            fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
+            fill={activeBeat >= 2 ? '#1B54C7' : '#102A50'}
             fontSize="12"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
@@ -315,14 +341,14 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             height="44"
             rx="12"
             fill={activeBeat >= 2 ? '#FFFFFF' : '#F8FAFF'}
-            stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
+            stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.25)'}
             strokeWidth={activeBeat >= 2 ? '2.2' : '1.2'}
           />
           <text
             x="829"
             y="131"
             textAnchor="middle"
-            fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
+            fill={activeBeat >= 2 ? '#1B54C7' : '#102A50'}
             fontSize="12"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
@@ -338,14 +364,14 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             height="44"
             rx="12"
             fill={activeBeat >= 2 ? '#FFFFFF' : '#F8FAFF'}
-            stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
+            stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.25)'}
             strokeWidth={activeBeat >= 2 ? '2.2' : '1.2'}
           />
           <text
             x="829"
             y="183"
             textAnchor="middle"
-            fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
+            fill={activeBeat >= 2 ? '#1B54C7' : '#102A50'}
             fontSize="12"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
@@ -356,9 +382,9 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
       </svg>
 
       {/* Discrete State Pill */}
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-2.5 flex items-center gap-3">
         <div className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 text-[#102A50] text-xs font-mono font-semibold shadow-sm flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#2868E8] animate-pulse" />
+          <span className={`w-2 h-2 rounded-full bg-[#2868E8] ${reducedMotion ? '' : 'animate-pulse'}`} />
           <span>
             {activeBeat === 0 && 'Stage 1: Instruction Arrives at Controller'}
             {activeBeat === 1 && 'Stage 2: Opcode Decoded & Micro-Operations Sequenced'}

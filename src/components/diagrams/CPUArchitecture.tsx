@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import gsap from 'gsap';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 interface CPUArchitectureProps {
   mode?: 'hero' | 'split' | 'mascot';
@@ -14,9 +15,23 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const glowTracesRef = useRef<SVGGElement>(null);
+  const reducedMotion = useReducedMotion();
+  const uid = useId().replace(/:/g, '');
+
+  const pedestalTopId = `pedestalTop-${uid}`;
+  const pedestalEdgeId = `pedestalEdge-${uid}`;
+  const chipNavyId = `chipNavy-${uid}`;
+  const chipEdgeId = `chipEdge-${uid}`;
+  const glowFilterId = `glowFilter-${uid}`;
 
   useEffect(() => {
     if (!svgRef.current) return;
+    if (reducedMotion) {
+      gsap.set(svgRef.current.querySelectorAll('.trace-pulse'), { strokeDashoffset: 0 });
+      gsap.set(svgRef.current.querySelectorAll('.chip-float'), { y: 0 });
+      return;
+    }
+
     const ctx = gsap.context(() => {
       // Idle breathing pulse for circuit traces
       gsap.to('.trace-pulse', {
@@ -38,45 +53,41 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
     }, svgRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <div className={`relative flex items-center justify-center select-none ${className}`}>
       {/* Ambient background soft glow */}
-      <div 
-        className="absolute w-[340px] h-[340px] rounded-full bg-[#2868E8]/12 blur-3xl pointer-events-none -z-10"
+      <div
+        className="absolute w-[74%] aspect-square rounded-full bg-[#2868E8]/12 blur-3xl pointer-events-none -z-10"
         aria-hidden="true"
       />
 
       <svg
         ref={svgRef}
-        viewBox="0 0 500 420"
-        className="w-full max-w-[460px] h-auto drop-shadow-xl"
+        viewBox="35 88 430 315"
+        className="w-full h-auto drop-shadow-xl"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="pedestalTop" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={pedestalTopId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FFFFFF" />
             <stop offset="100%" stopColor="#EBF2FF" />
           </linearGradient>
-          <linearGradient id="pedestalEdge" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id={pedestalEdgeId} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#D2E3FC" />
             <stop offset="100%" stopColor="#B3CDFA" />
           </linearGradient>
-          <linearGradient id="chipNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id={chipNavyId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#1E3E6F" />
             <stop offset="100%" stopColor="#102A50" />
           </linearGradient>
-          <linearGradient id="chipEdge" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id={chipEdgeId} x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#0B1C36" />
             <stop offset="100%" stopColor="#06101E" />
           </linearGradient>
-          <linearGradient id="blueGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#2868E8" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#6CA1FF" stopOpacity="0.9" />
-          </linearGradient>
-          <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+          <filter id={glowFilterId} x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="3" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
@@ -87,12 +98,12 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
           {/* Base bottom thickness */}
           <path
             d="M 250 380 L 440 270 L 440 286 L 250 396 L 60 286 L 60 270 Z"
-            fill="url(#pedestalEdge)"
+            fill={`url(#${pedestalEdgeId})`}
           />
           {/* Base top face */}
           <path
             d="M 250 170 L 440 270 L 250 370 L 60 270 Z"
-            fill="url(#pedestalTop)"
+            fill={`url(#${pedestalTopId})`}
             stroke="#2868E8"
             strokeOpacity="0.2"
             strokeWidth="1.5"
@@ -115,7 +126,7 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
               strokeLinecap="round"
               strokeDasharray="12 36"
               className="trace-pulse"
-              filter="url(#glowFilter)"
+              filter={`url(#${glowFilterId})`}
             />
 
             {/* Bottom-right traces */}
@@ -133,7 +144,7 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
               strokeLinecap="round"
               strokeDasharray="10 30"
               className="trace-pulse"
-              filter="url(#glowFilter)"
+              filter={`url(#${glowFilterId})`}
             />
 
             {/* Bottom-left traces */}
@@ -151,7 +162,7 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
               strokeLinecap="round"
               strokeDasharray="14 32"
               className="trace-pulse"
-              filter="url(#glowFilter)"
+              filter={`url(#${glowFilterId})`}
             />
 
             {/* Top-left traces */}
@@ -169,7 +180,7 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
               strokeLinecap="round"
               strokeDasharray="12 36"
               className="trace-pulse"
-              filter="url(#glowFilter)"
+              filter={`url(#${glowFilterId})`}
             />
 
             {/* Accent trace nodes */}
@@ -202,13 +213,13 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
           {/* Chip Bottom/Side Bevel */}
           <path
             d="M 250 250 L 370 175 L 370 192 L 250 267 L 130 192 L 130 175 Z"
-            fill="url(#chipEdge)"
+            fill={`url(#${chipEdgeId})`}
           />
 
           {/* Chip Top Silicon Die Face */}
           <path
             d="M 250 100 L 370 175 L 250 250 L 130 175 Z"
-            fill="url(#chipNavy)"
+            fill={`url(#${chipNavyId})`}
             stroke="#2868E8"
             strokeWidth="2"
             strokeOpacity="0.6"
@@ -243,7 +254,7 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
                 x="250"
                 y="200"
                 textAnchor="middle"
-                fill="#2868E8"
+                fill="#DBEAFE"
                 fontSize="9"
                 fontWeight="600"
                 fontFamily="Inter, sans-serif"
@@ -262,10 +273,10 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
               <path
                 d="M 250 115 L 250 235 L 150 175 Z"
                 fill={activeSection === 'datapath' || activeSection === 'both' ? '#2868E8' : '#102A50'}
-                fillOpacity={activeSection === 'datapath' || activeSection === 'both' ? '0.35' : '0.1'}
+                fillOpacity={activeSection === 'datapath' || activeSection === 'both' ? '0.32' : '0.08'}
                 stroke="#2868E8"
                 strokeWidth={activeSection === 'datapath' ? '2.5' : '1'}
-                className="transition-all duration-300"
+                className={reducedMotion ? undefined : 'transition-all duration-300'}
               />
               <text
                 x="200"
@@ -282,9 +293,9 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
                 x="200"
                 y="186"
                 textAnchor="middle"
-                fill="#94BDFF"
-                fontSize="8"
-                fontWeight="500"
+                fill="#DBEAFE"
+                fontSize="8.5"
+                fontWeight="600"
                 fontFamily="Inter, sans-serif"
               >
                 ALU • Registers
@@ -294,10 +305,10 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
               <path
                 d="M 250 115 L 350 175 L 250 235 Z"
                 fill={activeSection === 'controller' || activeSection === 'both' ? '#2868E8' : '#102A50'}
-                fillOpacity={activeSection === 'controller' || activeSection === 'both' ? '0.5' : '0.1'}
+                fillOpacity={activeSection === 'controller' || activeSection === 'both' ? '0.45' : '0.08'}
                 stroke="#2868E8"
                 strokeWidth={activeSection === 'controller' ? '2.5' : '1'}
-                className="transition-all duration-300"
+                className={reducedMotion ? undefined : 'transition-all duration-300'}
               />
               <text
                 x="300"
@@ -314,9 +325,9 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
                 x="300"
                 y="186"
                 textAnchor="middle"
-                fill="#94BDFF"
-                fontSize="8"
-                fontWeight="500"
+                fill="#DBEAFE"
+                fontSize="8.5"
+                fontWeight="600"
                 fontFamily="Inter, sans-serif"
               >
                 Decoder • Control Logic
@@ -331,7 +342,7 @@ export const CPUArchitecture: React.FC<CPUArchitectureProps> = ({
                 stroke="#6CA1FF"
                 strokeWidth="2"
                 strokeDasharray="4 2"
-                filter="url(#glowFilter)"
+                filter={`url(#${glowFilterId})`}
               />
             </g>
           )}

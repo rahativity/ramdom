@@ -1,5 +1,14 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Maximize2, Minimize2, Grid, Play, Pause, RotateCcw } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  Minimize2,
+  Grid,
+  Play,
+  Pause,
+  RotateCcw,
+} from 'lucide-react';
 import { IconButton } from '../ui/IconButton';
 
 interface SlideNavigationProps {
@@ -37,7 +46,7 @@ export const SlideNavigation: React.FC<SlideNavigationProps> = ({
   return (
     <nav
       aria-label="Presentation controls"
-      className="flex items-center gap-2 p-1.5 rounded-full glass-panel border border-[#2868E8]/20 bg-white/70 backdrop-blur-md shadow-sm transition-opacity duration-300"
+      className="flex items-center gap-1 sm:gap-2 p-1 sm:p-1.5 rounded-full glass-panel border border-[#2868E8]/20 bg-white/80 backdrop-blur-md shadow-sm transition-opacity duration-300"
     >
       {/* Overview Button */}
       <IconButton
@@ -50,7 +59,7 @@ export const SlideNavigation: React.FC<SlideNavigationProps> = ({
       {/* Auto Play Toggle */}
       <IconButton
         icon={isAutoPlay ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
-        label={isAutoPlay ? "Pause Auto Animation" : "Play Auto Animation"}
+        label={isAutoPlay ? 'Pause Auto Animation' : 'Play Auto Animation'}
         size="sm"
         active={isAutoPlay}
         onClick={onToggleAutoPlay}
@@ -66,7 +75,7 @@ export const SlideNavigation: React.FC<SlideNavigationProps> = ({
         />
       )}
 
-      <div className="w-[1px] h-4 bg-[#102A50]/15 mx-0.5" />
+      <div className="w-[1px] h-4 bg-[#102A50]/20 mx-0.5" aria-hidden="true" />
 
       {/* Prev Button */}
       <IconButton
@@ -75,7 +84,7 @@ export const SlideNavigation: React.FC<SlideNavigationProps> = ({
         size="sm"
         disabled={isFirst}
         onClick={onPrev}
-        className={isFirst ? "opacity-30 cursor-not-allowed hover:bg-transparent hover:text-inherit" : ""}
+        className={isFirst ? 'opacity-40 cursor-not-allowed hover:bg-white/80 hover:text-[#102A50]' : ''}
       />
 
       {/* Next Button */}
@@ -85,19 +94,18 @@ export const SlideNavigation: React.FC<SlideNavigationProps> = ({
         size="sm"
         disabled={isLast}
         onClick={onNext}
-        className={isLast ? "opacity-30 cursor-not-allowed hover:bg-transparent hover:text-inherit" : ""}
+        className={isLast ? 'opacity-40 cursor-not-allowed hover:bg-white/80 hover:text-[#102A50]' : ''}
       />
 
-      <div className="w-[1px] h-4 bg-[#102A50]/15 mx-0.5" />
+      <div className="w-[1px] h-4 bg-[#102A50]/20 mx-0.5" aria-hidden="true" />
 
       {/* Fullscreen Toggle */}
       <IconButton
         icon={isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-        label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+        label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
         size="sm"
         onClick={onToggleFullscreen}
       />
     </nav>
   );
 };
-

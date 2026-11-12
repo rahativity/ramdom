@@ -12,6 +12,7 @@
   --color-navy-10: rgba(16, 42, 80, 0.1);
 
   --color-electric: #2868E8;
+  --color-electric-dark: #1B54C7;
   --color-electric-80: rgba(40, 104, 232, 0.8);
   --color-electric-25: rgba(40, 104, 232, 0.25);
   --color-electric-15: rgba(40, 104, 232, 0.15);
@@ -41,6 +42,11 @@
   h1, h2, h3, .font-heading {
     font-family: "Space Grotesk", sans-serif;
   }
+
+  :where(a:any-link, button, [tabindex]):focus-visible {
+    outline: 2px solid #1B54C7;
+    outline-offset: 2px;
+  }
 }
 
 /* Custom scrollbars / utility classes */
@@ -60,16 +66,75 @@
 
 .subtle-grid {
   background-size: 32px 32px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(40, 104, 232, 0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(40, 104, 232, 0.04) 1px, transparent 1px);
 }
 
+/* Native top-layer modal scroll containment & transitions */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+dialog.overview-dialog {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out,
+    display 0.2s,
+    overlay 0.2s;
+  transition-behavior: allow-discrete;
+}
+
+dialog.overview-dialog[open] {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@starting-style {
+  dialog.overview-dialog[open] {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+dialog.overview-dialog::backdrop {
+  background-color: rgba(16, 42, 80, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition:
+    background-color 0.2s ease-out,
+    backdrop-filter 0.2s ease-out,
+    display 0.2s,
+    overlay 0.2s;
+  transition-behavior: allow-discrete;
+}
+
+dialog.overview-dialog[open]::backdrop {
+  background-color: rgba(16, 42, 80, 0.42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@starting-style {
+  dialog.overview-dialog[open]::backdrop {
+    background-color: rgba(16, 42, 80, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  dialog.overview-dialog,
+  dialog.overview-dialog::backdrop {
+    transition: none;
+    transform: none;
   }
 }

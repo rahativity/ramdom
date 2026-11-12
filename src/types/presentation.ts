@@ -37,6 +37,7 @@ export interface PresentationState {
   nextBeat: () => void;
   prevBeat: () => void;
   toggleOverview: () => void;
+  closeOverview: () => void;
   toggleFullscreen: () => void;
   toggleAutoPlay: () => void;
 }
