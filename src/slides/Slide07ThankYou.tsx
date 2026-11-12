@@ -64,26 +64,26 @@ export const Slide07ThankYou: React.FC<Slide07ThankYouProps> = ({ onRestart }) =
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col items-center justify-center text-center px-5 sm:px-10 lg:px-14 xl:px-16 py-3 lg:py-4 overflow-y-auto lg:overflow-hidden select-none"
+      className="w-full h-full flex flex-col items-center justify-center text-center px-4 sm:px-8 lg:px-8 xl:px-10 py-2 lg:py-3 overflow-y-auto lg:overflow-hidden select-none"
     >
-      <div className="my-auto flex flex-col items-center justify-center max-w-[1160px] w-full mx-auto">
+      <div className="my-auto flex flex-col items-center justify-center max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px] w-full mx-auto">
         {/* Central Chip Mascot */}
         <div className="ty-chip mb-3 sm:mb-4">
           <CPUArchitecture
             mode="mascot"
-            className="w-[190px] sm:w-[250px] lg:w-[290px]"
+            className="w-[200px] sm:w-[270px] lg:w-[310px] xl:w-[340px] 2xl:w-[400px]"
           />
         </div>
 
         {/* Main Headline */}
-        <h1 className="ty-title font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-[#102A50] tracking-tight mb-2.5 sm:mb-3">
+        <h1 className="ty-title font-heading font-bold text-4xl sm:text-5xl lg:text-6xl xl:text-[66px] 2xl:text-[74px] text-[#102A50] tracking-tight mb-2.5 sm:mb-3">
           Thank You!
         </h1>
 
         {/* Subtitle with accent line */}
         <div className="ty-sub flex items-center justify-center gap-3 mb-5 sm:mb-6">
           <div className="w-8 sm:w-10 h-[2px] bg-[#2868E8] rounded-full" />
-          <p className="text-lg sm:text-2xl font-heading font-medium text-[#102A50]/75">
+          <p className="text-lg sm:text-2xl xl:text-[26px] font-heading font-medium text-[#102A50]/75">
             Any Questions?
           </p>
           <div className="w-8 sm:w-10 h-[2px] bg-[#2868E8] rounded-full" />
@@ -94,7 +94,7 @@ export const Slide07ThankYou: React.FC<Slide07ThankYouProps> = ({ onRestart }) =
           <button
             type="button"
             onClick={onRestart}
-            className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white hover:bg-[#F8FAFF] text-[#102A50] hover:text-[#1B54C7] font-heading font-semibold text-sm sm:text-base border border-[#2868E8]/25 shadow-sm hover:shadow ${
+            className={`inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-white hover:bg-[#F8FAFF] text-[#102A50] hover:text-[#1B54C7] font-heading font-semibold text-sm sm:text-base xl:text-lg border border-[#2868E8]/25 shadow-sm hover:shadow ${
               reducedMotion ? '' : 'transition-all duration-200'
             } cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2868E8] focus-visible:ring-offset-2`}
           >
@@ -104,12 +104,12 @@ export const Slide07ThankYou: React.FC<Slide07ThankYouProps> = ({ onRestart }) =
         </div>
 
         {/* Presentation Summary Capsule */}
-        <div className="ty-summary flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 text-xs font-mono text-[#102A50]">
-          <span className="px-3 py-1.5 rounded-xl bg-white border border-[#2868E8]/20 shadow-xs font-medium">
+        <div className="ty-summary flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 text-xs sm:text-sm xl:text-[15px] font-mono text-[#102A50]">
+          <span className="px-4 py-2 rounded-xl bg-white border border-[#2868E8]/20 shadow-xs font-medium">
             Data Path: Raw Execution
           </span>
           <span className="text-[#1B54C7] font-bold hidden sm:inline" aria-hidden="true">•</span>
-          <span className="px-3 py-1.5 rounded-xl bg-white border border-[#2868E8]/20 shadow-xs font-medium">
+          <span className="px-4 py-2 rounded-xl bg-white border border-[#2868E8]/20 shadow-xs font-medium">
             Controller: System Orchestration
           </span>
         </div>

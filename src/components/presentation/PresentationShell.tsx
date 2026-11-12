@@ -68,8 +68,8 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
       </header>
 
       {/* Center 16:9 Presentation Stage Viewport (graceful scroll on small screens) */}
-      <main className="relative z-10 flex-1 min-h-0 w-full flex items-start lg:items-center justify-center px-4 sm:px-8 lg:px-10 py-2 sm:py-3 lg:py-4 overflow-y-auto overflow-x-hidden lg:overflow-hidden">
-        <div className="relative w-full min-h-full lg:min-h-0 lg:h-full max-w-[1440px] lg:max-h-[810px] lg:aspect-[16/9] flex items-center justify-center">
+      <main className="relative z-10 flex-1 min-h-0 w-full flex items-start lg:items-center justify-center px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2 lg:py-3 overflow-y-auto overflow-x-hidden lg:overflow-hidden">
+        <div className="relative w-full min-h-full lg:min-h-0 lg:h-full max-w-[1680px] lg:max-h-[960px] flex items-center justify-center">
           {children}
         </div>
       </main>

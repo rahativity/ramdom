@@ -49,24 +49,24 @@ export const Slide02Overview: React.FC<Slide02OverviewProps> = ({ currentBeat })
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col justify-start lg:justify-center gap-4 lg:gap-7 px-5 sm:px-10 lg:px-14 xl:px-16 py-3 lg:py-5 overflow-y-auto lg:overflow-hidden"
+      className="w-full h-full flex flex-col justify-start lg:justify-center gap-3.5 lg:gap-5 2xl:gap-7 px-4 sm:px-8 lg:px-8 xl:px-10 py-2 lg:py-3 overflow-y-auto lg:overflow-hidden"
     >
       {/* Slide Headline & Supporting Text */}
-      <div className="overview-head w-full max-w-[1160px] mx-auto shrink-0">
-        <h2 className="font-heading font-bold text-2xl sm:text-4xl text-[#102A50] tracking-tight mb-1">
+      <div className="overview-head w-full max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px] mx-auto shrink-0">
+        <h2 className="font-heading font-bold text-2xl sm:text-4xl xl:text-[40px] 2xl:text-[46px] text-[#102A50] tracking-tight mb-1">
           Two Components. One Processor.
         </h2>
-        <p className="text-sm sm:text-lg text-[#102A50]/75 font-normal">
+        <p className="text-sm sm:text-lg xl:text-xl text-[#102A50]/75 font-normal">
           A CPU combines data processing and control.
         </p>
       </div>
 
       {/* Main Composition: Equal-Height Dual Cards + Center Split CPU Showcase */}
-      <div className="w-full max-w-[1160px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-stretch">
+      <div className="w-full max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 2xl:gap-8 items-stretch">
         {/* Left Side: Data Path Card */}
         <div className="overview-card lg:col-span-4 flex">
           <div
-            className={`w-full h-full flex flex-col justify-between p-4 sm:p-6 lg:p-7 rounded-2xl border ${
+            className={`w-full h-full flex flex-col justify-between p-5 sm:p-6 xl:p-7 2xl:p-8 rounded-2xl border ${
               reducedMotion ? '' : 'transition-all duration-300'
             } ${
               activeSection === 'datapath' || activeSection === 'both'
@@ -80,17 +80,17 @@ export const Slide02Overview: React.FC<Slide02OverviewProps> = ({ currentBeat })
                   <Cpu className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-lg sm:text-xl text-[#102A50] leading-tight">
+                  <h3 className="font-heading font-bold text-lg sm:text-xl xl:text-[22px] 2xl:text-2xl text-[#102A50] leading-tight">
                     Data Path
                   </h3>
-                  <span className="text-xs font-mono font-semibold text-[#1B54C7]">
+                  <span className="text-xs xl:text-[13px] font-mono font-semibold text-[#1B54C7]">
                     Execution Plane
                   </span>
                 </div>
               </div>
 
               {/* Supporting Educational Bullets */}
-              <ul className="space-y-2.5 sm:space-y-3.5 text-sm sm:text-base text-[#102A50]/85 pt-1">
+              <ul className="space-y-3 xl:space-y-4 text-sm sm:text-base xl:text-[17px] 2xl:text-lg text-[#102A50]/85 pt-1">
                 <li className="overview-bullet flex items-start gap-2.5">
                   <span className="w-2 h-2 rounded-full bg-[#2868E8] mt-2 shrink-0" />
                   <span>
@@ -113,20 +113,20 @@ export const Slide02Overview: React.FC<Slide02OverviewProps> = ({ currentBeat })
               </ul>
             </div>
 
-            <div className="mt-4 sm:mt-6 pt-3.5 border-t border-[#102A50]/12 flex flex-wrap gap-2 text-xs font-mono text-[#1B54C7]">
-              <span className="px-2.5 py-1 rounded-md bg-[#2868E8]/10 font-semibold">Registers</span>
-              <span className="px-2.5 py-1 rounded-md bg-[#2868E8]/10 font-semibold">ALU</span>
-              <span className="px-2.5 py-1 rounded-md bg-[#2868E8]/10 font-semibold">Data Buses</span>
+            <div className="mt-4 sm:mt-6 pt-3.5 border-t border-[#102A50]/12 flex flex-wrap gap-2 text-xs xl:text-[13px] font-mono text-[#1B54C7]">
+              <span className="px-3 py-1.5 rounded-md bg-[#2868E8]/10 font-semibold">Registers</span>
+              <span className="px-3 py-1.5 rounded-md bg-[#2868E8]/10 font-semibold">ALU</span>
+              <span className="px-3 py-1.5 rounded-md bg-[#2868E8]/10 font-semibold">Data Buses</span>
             </div>
           </div>
         </div>
 
         {/* Center: Split CPU Architecture Visual */}
         <div className="overview-card lg:col-span-4 flex">
-          <div className="w-full h-full flex flex-col items-center justify-between p-4 sm:p-5 lg:p-6 rounded-2xl bg-white/85 border border-[#2868E8]/20 shadow-sm">
+          <div className="w-full h-full flex flex-col items-center justify-between p-5 sm:p-6 xl:p-7 2xl:p-8 rounded-2xl bg-white/85 border border-[#2868E8]/20 shadow-sm">
             <div className="w-full flex items-center justify-center gap-2 pb-2 border-b border-[#102A50]/10">
               <span className="w-2 h-2 rounded-full bg-[#2868E8]" />
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#1B54C7]">
+              <span className="text-[11px] xl:text-xs font-mono font-bold uppercase tracking-wider text-[#1B54C7]">
                 Unified Silicon Die
               </span>
             </div>
@@ -134,10 +134,10 @@ export const Slide02Overview: React.FC<Slide02OverviewProps> = ({ currentBeat })
             <CPUArchitecture
               mode="split"
               activeSection={activeSection}
-              className="w-full max-w-[195px] sm:max-w-[260px] lg:max-w-[330px] my-2 sm:my-3"
+              className="w-full max-w-[205px] sm:max-w-[270px] lg:max-w-[330px] xl:max-w-[370px] 2xl:max-w-[430px] my-2 sm:my-3"
             />
 
-            <div className="px-3 py-1 rounded-full bg-[#2868E8]/10 border border-[#2868E8]/20 text-[11px] font-mono font-semibold text-[#1B54C7]">
+            <div className="px-3.5 py-1.5 rounded-full bg-[#2868E8]/10 border border-[#2868E8]/20 text-[11px] xl:text-xs font-mono font-semibold text-[#1B54C7]">
               {activeSection === 'both' && 'Active: Coordinated Dual Planes'}
               {activeSection === 'datapath' && 'Focus: Data Path Plane'}
               {activeSection === 'controller' && 'Focus: Controller Plane'}
@@ -148,7 +148,7 @@ export const Slide02Overview: React.FC<Slide02OverviewProps> = ({ currentBeat })
         {/* Right Side: Controller Card */}
         <div className="overview-card lg:col-span-4 flex">
           <div
-            className={`w-full h-full flex flex-col justify-between p-4 sm:p-6 lg:p-7 rounded-2xl border ${
+            className={`w-full h-full flex flex-col justify-between p-5 sm:p-6 xl:p-7 2xl:p-8 rounded-2xl border ${
               reducedMotion ? '' : 'transition-all duration-300'
             } ${
               activeSection === 'controller' || activeSection === 'both'
@@ -162,17 +162,17 @@ export const Slide02Overview: React.FC<Slide02OverviewProps> = ({ currentBeat })
                   <Settings2 className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-lg sm:text-xl text-[#102A50] leading-tight">
+                  <h3 className="font-heading font-bold text-lg sm:text-xl xl:text-[22px] 2xl:text-2xl text-[#102A50] leading-tight">
                     Controller
                   </h3>
-                  <span className="text-xs font-mono font-semibold text-[#102A50]/75">
+                  <span className="text-xs xl:text-[13px] font-mono font-semibold text-[#102A50]/75">
                     Command Plane
                   </span>
                 </div>
               </div>
 
               {/* Supporting Educational Bullets */}
-              <ul className="space-y-2.5 sm:space-y-3.5 text-sm sm:text-base text-[#102A50]/85 pt-1">
+              <ul className="space-y-3 xl:space-y-4 text-sm sm:text-base xl:text-[17px] 2xl:text-lg text-[#102A50]/85 pt-1">
                 <li className="overview-bullet flex items-start gap-2.5">
                   <span className="w-2 h-2 rounded-full bg-[#2868E8] mt-2 shrink-0" />
                   <span>
@@ -194,10 +194,10 @@ export const Slide02Overview: React.FC<Slide02OverviewProps> = ({ currentBeat })
               </ul>
             </div>
 
-            <div className="mt-4 sm:mt-6 pt-3.5 border-t border-[#102A50]/12 flex flex-wrap gap-2 text-xs font-mono text-[#102A50]">
-              <span className="px-2.5 py-1 rounded-md bg-[#102A50]/8 font-semibold">Decoder</span>
-              <span className="px-2.5 py-1 rounded-md bg-[#102A50]/8 font-semibold">Signals</span>
-              <span className="px-2.5 py-1 rounded-md bg-[#102A50]/8 font-semibold">Sequencer</span>
+            <div className="mt-4 sm:mt-6 pt-3.5 border-t border-[#102A50]/12 flex flex-wrap gap-2 text-xs xl:text-[13px] font-mono text-[#102A50]">
+              <span className="px-3 py-1.5 rounded-md bg-[#102A50]/8 font-semibold">Decoder</span>
+              <span className="px-3 py-1.5 rounded-md bg-[#102A50]/8 font-semibold">Signals</span>
+              <span className="px-3 py-1.5 rounded-md bg-[#102A50]/8 font-semibold">Sequencer</span>
             </div>
           </div>
         </div>

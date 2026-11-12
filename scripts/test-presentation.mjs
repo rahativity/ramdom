@@ -192,11 +192,83 @@ async function collectViewportMetrics(page, checkDesktop, currentIdx) {
     const headerOverflow = header ? header.scrollWidth > header.clientWidth : false;
 
     const slideRoot = main?.firstElementChild?.firstElementChild?.firstElementChild;
+    const stageShell = main?.querySelector('.max-w-\\[1680px\\]');
+    const stageBoxes = Array.from(main ? main.querySelectorAll('.max-w-\\[1260px\\]') : []);
+    const stale1160Count = document.querySelectorAll('.max-w-\\[1160px\\]').length;
     const mainVertOverflow = main ? main.scrollHeight > main.clientHeight + 2 : false;
     const slideVertOverflow = slideRoot ? slideRoot.scrollHeight > slideRoot.clientHeight + 2 : false;
+    const shellVertOverflow = stageShell ? stageShell.scrollHeight > stageShell.clientHeight + 2 : false;
 
-    // Slide-specific geometry checks (alignment & card height parity on desktop)
+    const headerRect = header ? header.getBoundingClientRect() : null;
+    const visibleStageRects = stageBoxes
+      .map((el) => el.getBoundingClientRect())
+      .filter((r) => r.width > 0 && r.height > 0);
+    const stageUnion =
+      visibleStageRects.length > 0
+        ? {
+            left: Math.min(...visibleStageRects.map((r) => r.left)),
+            top: Math.min(...visibleStageRects.map((r) => r.top)),
+            right: Math.max(...visibleStageRects.map((r) => r.right)),
+            bottom: Math.max(...visibleStageRects.map((r) => r.bottom)),
+          }
+        : null;
+
+    // Slide-specific geometry checks (alignment, stage balance & card height parity on desktop)
     const extraIssues = [];
+    if (!stageShell) {
+      extraIssues.push('Missing enlarged stage shell (.max-w-[1680px]) inside <main>');
+    }
+    if (stale1160Count > 0) {
+      extraIssues.push(`Found ${stale1160Count} stale .max-w-[1160px] container(s)`);
+    }
+    if (stageBoxes.length === 0) {
+      extraIssues.push('Missing enlarged slide stage container (.max-w-[1260px]) inside <main>');
+    }
+    if (isDesktop && stageShell) {
+      const shellRect = stageShell.getBoundingClientRect();
+      if (docEl.clientWidth >= 1920 && (shellRect.width <= 1440 || shellRect.width > 1681)) {
+        extraIssues.push(`1920px stage shell width out of expected (1440, 1680] range: ${shellRect.width.toFixed(1)}px`);
+      }
+    }
+    if (isDesktop && stageUnion && mainRect && headerRect) {
+      const unionW = stageUnion.right - stageUnion.left;
+      const unionH = stageUnion.bottom - stageUnion.top;
+      const widthRatio = unionW / docEl.clientWidth;
+      const heightRatio = unionH / mainRect.height;
+      const leftMargin = stageUnion.left;
+      const rightMargin = docEl.clientWidth - stageUnion.right;
+      const bottomMargin = docEl.clientHeight - stageUnion.bottom;
+      const topGapFromHeader = stageUnion.top - headerRect.bottom;
+
+      if (stageUnion.top < mainRect.top - 1 || stageUnion.bottom > mainRect.bottom + 1) {
+        extraIssues.push(
+          `Slide content extends outside <main> bounds (y=${stageUnion.top.toFixed(1)}..${stageUnion.bottom.toFixed(1)} vs main=${mainRect.top.toFixed(1)}..${mainRect.bottom.toFixed(1)})`
+        );
+      }
+      if (topGapFromHeader < 8) {
+        extraIssues.push(`Slide top too close to <header>: ${topGapFromHeader.toFixed(1)}px`);
+      }
+      if (leftMargin < 48 || rightMargin < 48 || bottomMargin < 16) {
+        extraIssues.push(
+          `Insufficient outer corner clearance (L=${leftMargin.toFixed(1)}, R=${rightMargin.toFixed(1)}, B=${bottomMargin.toFixed(1)})`
+        );
+      }
+      if (Math.abs((stageUnion.left - mainRect.left) - (mainRect.right - stageUnion.right)) > 2) {
+        extraIssues.push(`Slide container not horizontally centered inside <main>`);
+      }
+      if (widthRatio < 0.7 || widthRatio > 0.94) {
+        extraIssues.push(`Unbalanced horizontal stage footprint ratio: ${(widthRatio * 100).toFixed(1)}%`);
+      }
+      if (heightRatio < 0.45 || heightRatio > 0.95) {
+        extraIssues.push(`Unbalanced vertical stage footprint ratio: ${(heightRatio * 100).toFixed(1)}%`);
+      }
+      if (docEl.clientWidth >= 1440 && unionW <= 1200) {
+        extraIssues.push(`Stage width at ${docEl.clientWidth}px did not scale past 1200px (${unionW.toFixed(1)}px)`);
+      }
+      if (docEl.clientWidth >= 1920 && unionW < 1450) {
+        extraIssues.push(`Stage width at 1920px did not reach ~1500px (${unionW.toFixed(1)}px)`);
+      }
+    }
     if (isDesktop && slideIdx === 1) {
       const cards = Array.from(document.querySelectorAll('.overview-card > div'));
       if (cards.length === 3) {
@@ -260,6 +332,7 @@ async function collectViewportMetrics(page, checkDesktop, currentIdx) {
       mainHorizOverflow,
       mainVertOverflow,
       slideVertOverflow,
+      shellVertOverflow,
       headerOverflow,
       interactiveOverflow,
       extraIssues,
@@ -340,6 +413,12 @@ function assertViewportMetrics(metrics, labelPrefix, checkDesktop) {
     `${labelPrefix}: element overflowed viewport: ${metrics.interactiveOverflow.join(', ')}`
   );
 
+  assert.deepEqual(
+    metrics.extraIssues,
+    [],
+    `${labelPrefix}: layout issue -> ${metrics.extraIssues.join('; ')}`
+  );
+
   if (checkDesktop) {
     assert.equal(
       metrics.mainVertOverflow,
@@ -351,10 +430,10 @@ function assertViewportMetrics(metrics, labelPrefix, checkDesktop) {
       false,
       `${labelPrefix}: desktop vertical clipping in slide container (${JSON.stringify(metrics.slideDims)})`
     );
-    assert.deepEqual(
-      metrics.extraIssues,
-      [],
-      `${labelPrefix}: layout issue -> ${metrics.extraIssues.join('; ')}`
+    assert.equal(
+      metrics.shellVertOverflow,
+      false,
+      `${labelPrefix}: desktop vertical clipping in stage shell (.max-w-[1680px])`
     );
   }
 }
@@ -556,7 +635,7 @@ async function runViewportLayoutChecks(browser, url) {
     page.on('pageerror', (err) => vpErrors.push(String(err)));
 
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 15000 });
-    await sleep(400);
+    await sleep(950);
 
     // Pause auto-play so slide state stays stable during measurement
     const pauseBtn = await page.$('button[aria-label="Pause Auto Animation"]');

@@ -54,25 +54,25 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full max-w-[1160px] mx-auto flex flex-col items-center justify-center ${className}`}
+      className={`relative w-full max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px] mx-auto flex flex-col items-center justify-center ${className}`}
     >
       {/* Visual Domain Headers (Controller vs Datapath boundary) */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mb-2">
-        <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#2868E8]/8 border border-[#2868E8]/20">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#2868E8]/8 border border-[#2868E8]/20">
           <div className="w-2.5 h-2.5 rounded-full bg-[#2868E8] shrink-0" />
-          <span className="text-xs font-bold tracking-wide uppercase font-heading text-[#102A50]">
+          <span className="text-xs xl:text-[13px] font-bold tracking-wide uppercase font-heading text-[#102A50]">
             Controller Domain
           </span>
-          <span className="text-[11px] text-[#102A50]/75 hidden sm:inline">
+          <span className="text-[11px] xl:text-xs text-[#102A50]/75 hidden sm:inline">
             (Decides & Coordinates)
           </span>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#102A50]/5 border border-[#102A50]/15">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#102A50]/5 border border-[#102A50]/15">
           <div className="w-2.5 h-2.5 rounded-full bg-[#102A50] shrink-0" />
-          <span className="text-xs font-bold tracking-wide uppercase font-heading text-[#102A50]">
+          <span className="text-xs xl:text-[13px] font-bold tracking-wide uppercase font-heading text-[#102A50]">
             Data Path Domain
           </span>
-          <span className="text-[11px] text-[#102A50]/75 hidden sm:inline">
+          <span className="text-[11px] xl:text-xs text-[#102A50]/75 hidden sm:inline">
             (Moves & Processes Data)
           </span>
         </div>
@@ -81,7 +81,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
       {/* Main SVG Architectural Schematic */}
       <svg
         viewBox="0 25 980 350"
-        className="w-full h-auto max-h-[345px] lg:max-h-[375px] xl:max-h-[430px] drop-shadow-sm select-none bg-white rounded-2xl border border-[#2868E8]/15 p-2"
+        className="w-full h-auto max-h-[min(365px,54dvh)] xl:max-h-[min(455px,56dvh)] 2xl:max-h-[min(560px,58dvh)] drop-shadow-sm select-none bg-white rounded-2xl border border-[#2868E8]/15 p-2"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -491,7 +491,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
               key={stg.id}
               type="button"
               onClick={() => onSelectBeat?.(stg.id)}
-              className={`p-2 sm:p-2.5 rounded-xl border text-left ${
+              className={`p-2.5 sm:p-3 xl:p-3.5 rounded-xl border text-left ${
                 reducedMotion ? '' : 'transition-all duration-200'
               } cursor-pointer ${
                 isCurrent
@@ -502,7 +502,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
               }`}
             >
               <div className="flex items-center justify-between mb-0.5">
-                <span className={`text-xs font-bold font-mono ${isCurrent ? 'text-[#1B54C7]' : 'text-[#102A50]'}`}>
+                <span className={`text-xs sm:text-[13px] xl:text-sm font-bold font-mono ${isCurrent ? 'text-[#1B54C7]' : 'text-[#102A50]'}`}>
                   {stg.label}
                 </span>
                 {isCompleted ? (
@@ -511,7 +511,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
                   <span className={`w-2 h-2 rounded-full bg-[#2868E8] ${reducedMotion ? '' : 'animate-ping'}`} />
                 ) : null}
               </div>
-              <p className="text-[11px] text-[#102A50]/80 font-sans leading-tight">
+              <p className="text-[11px] sm:text-xs xl:text-[13px] text-[#102A50]/80 font-sans leading-tight">
                 {stg.desc}
               </p>
             </button>

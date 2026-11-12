@@ -51,21 +51,21 @@ Loaded via Google Fonts in `index.html`:
 
 | Level | Scale / Classes | Weight | Application |
 |---|---|---|---|
-| **Hero Display (Slide 01 / 07)** | `text-3xl sm:text-5xl xl:text-6xl` / `text-4xl sm:text-5xl lg:text-6xl` | `700` | Deck title & closing headline |
-| **Slide Headline** | `text-2xl sm:text-4xl` (`lg:text-[34px]` on Slide 06) | `700` | Primary slide heading |
-| **Supporting Subtitle** | `text-sm sm:text-lg` / `text-base sm:text-xl` | `400` | Single-line architectural statement |
-| **Card / Section Heading** | `text-lg sm:text-xl` | `700` | Domain cards & mechanism headers |
+| **Hero Display (Slide 01 / 07)** | `text-4xl sm:text-5xl lg:text-[56px] xl:text-[62px] 2xl:text-[72px]` / `text-4xl sm:text-5xl lg:text-6xl xl:text-[66px] 2xl:text-[74px]` | `700` | Deck title & closing headline |
+| **Slide Headline** | `text-2xl sm:text-4xl xl:text-[40px] 2xl:text-[46px]` (`lg:text-[34px] xl:text-[38px] 2xl:text-[44px]` on Slide 06) | `700` | Primary slide heading |
+| **Supporting Subtitle** | `text-base sm:text-xl xl:text-[22px] 2xl:text-2xl` (Slide 01), `text-sm sm:text-lg xl:text-xl` (Slides 02–05), `text-sm sm:text-base xl:text-lg` (Slide 06), `text-lg sm:text-2xl xl:text-[26px]` (Slide 07) | `400` | Single-line architectural statement |
+| **Card / Section Heading** | `text-lg sm:text-xl xl:text-[22px] 2xl:text-2xl` (Slide 02), `text-lg sm:text-xl xl:text-[22px]` (Slides 03–04), `text-base sm:text-lg xl:text-xl` (Slide 05) | `700` | Domain cards & mechanism headers |
 | **SVG Schematic Text** | `8.5px`–`24px` SVG user units | `600`–`700` | Component blocks, bus signals, registers |
-| **Micro Badges & Counters** | `10px`–`12px` (`font-mono`) | `600`–`700` | Slide index (`01 / 07`), in-slide stage pills (`Stage 1 / 4`), beat badges |
+| **Micro Badges & Counters** | `10px`–`15px` (`font-mono`) | `600`–`700` | Slide index (`01 / 07`), in-slide stage pills (`Stage 1 / 4`), beat badges, chips |
 
 ---
 
 ### 4. Responsive Shell, Framing & Calm Corner Artwork
 
-- **Root Viewport (`PresentationShell.tsx`):** `h-dvh min-h-dvh flex flex-col justify-between` (never rigid `h-screen`), allowing smooth scrolling inside `<main>` (`overflow-y-auto overflow-x-hidden lg:overflow-hidden`) on viewports below `lg` (`< 1024px`) and crisp centered `lg:aspect-[16/9]` (`max-w-[1440px] lg:max-h-[810px]`) framing on desktop.
+- **Root Viewport (`PresentationShell.tsx`):** `h-dvh min-h-dvh flex flex-col justify-between` (never rigid `h-screen`), allowing smooth scrolling inside `<main>` (`overflow-y-auto overflow-x-hidden lg:overflow-hidden`) on viewports below `lg` (`< 1024px`) and centered stage framing on desktop (`max-w-[1680px] lg:max-h-[960px]`, without locking `1920×1080` down to `1440×810` via `aspect-[16/9]`).
 - **Stage Gutters & Card Alignment:**
-  - `<main>` applies `px-4 sm:px-8 lg:px-10` horizontal clearance.
-  - Each slide container applies `px-5 sm:px-10 lg:px-14 xl:px-16` around a unified `max-w-[1160px]` grid, preserving generous whitespace from corner graphics while giving diagrams and cards full horizontal breathing room.
+  - `<main>` applies `px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2 lg:py-3` clearance around the `max-w-[1680px] lg:max-h-[960px]` stage shell.
+  - Each slide container applies `px-4 sm:px-8 lg:px-8 xl:px-10 py-2 lg:py-3` (`py-1.5 lg:py-2 2xl:py-4` on Slide 06) around a unified `max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px]` stage grid, preserving generous whitespace from corner graphics and `720px`-height safety at `1280×720` (`xl:`) while scaling cards and schematics proportionally at `1440×810` and `1920×1080`.
 - **Calm Corner Artwork (`AnimatedBackground.tsx`, 100% Static):**
   - `aria-hidden="true"`, `pointer-events-none`, zero GSAP/CSS side-rail loops, and `preserveAspectRatio` ending in `meet` (never `slice`).
   - **Top-Right (`viewBox="0 0 480 340"`, `xMaxYMin meet`):** Layered soft sky-blue organic waves (`#E6EFFF` / `#D6E5FF` fading into `#2868E8` ~0.22), thin orbital Bezier arc (`#2868E8`, ~0.20–0.24) with one static 45° diamond marker (`7×7`, `rx="1.5"`), and two translucent rounded micro-square tiles (`rx="6"`).
@@ -89,10 +89,10 @@ Loaded via Google Fonts in `index.html`:
 
 ### 6. Slide Composition Summary
 
-1. **Slide 01 (Welcome):** Balanced 2-column grid (`lg:col-span-6` typography & CTA + `lg:col-span-6` isometric CPU die).
-2. **Slide 02 (Architecture Overview):** Three `items-stretch` equal-height cards (`Data Path`, `Unified Silicon Die`, `Controller`).
+1. **Slide 01 (Welcome):** Balanced 2-column grid (`lg:col-span-6` scaled typography & CTA + `lg:col-span-6` isometric CPU die up to `2xl:max-w-[650px]`).
+2. **Slide 02 (Architecture Overview):** Three `items-stretch` equal-height cards (`Data Path`, `Unified Silicon Die` with split CPU up to `2xl:max-w-[430px]`, `Controller`).
 3. **Slide 03 (Data Path):** Equal-height `4 / 8` column split pairing Core Mechanisms bullets with the 5-stage `DataPathDiagram` (`5 + 3 = 8`) and dynamic beat badge.
 4. **Slide 04 (Controller):** Equal-height `4 / 8` column split pairing Command Orchestration bullets with the 3-beat `ControllerDiagram` (`RegRead = 1`, `ALUOp = ADD`, `RegWrite = 1`, timing loop).
-5. **Slide 05 (Key Differences):** Aligned `max-w-[1160px]` headline over equal-height `7 / 5` cards (`Comparison Table` + `Equilibrium in Architecture` scale with widened pan clearances around `DATA` / `CONTROL`).
-6. **Slide 06 (Working Together):** Compact `max-w-[1160px]` master schematic (`InstructionCycle`) sized cleanly for `1280×720`+ without clipping, plus interactive 4-stage sequence buttons (`1. FETCH` through `4. WRITE BACK`).
-7. **Slide 07 (Thank You):** Centered CPU mascot die, "Thank You!" / "Any Questions?", "Replay Presentation" button, and dual summary capsules.
+5. **Slide 05 (Key Differences):** Aligned `max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px]` headline over equal-height `7 / 5` cards (`Comparison Table` + `Equilibrium in Architecture` scale up to `2xl:max-w-[380px]` with widened pan clearances around `DATA` / `CONTROL`).
+6. **Slide 06 (Working Together):** Compact `max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px]` master schematic (`InstructionCycle`) with height-responsive SVG (`max-h-[min(365px,54dvh)] xl:max-h-[min(455px,56dvh)] 2xl:max-h-[min(560px,58dvh)]`) sized cleanly for `1280×720`+ without clipping while expanding across `1440×810` and `1920×1080`, plus interactive 4-stage sequence buttons (`1. FETCH` through `4. WRITE BACK`).
+7. **Slide 07 (Thank You):** Centered CPU mascot die (`w-[200px] sm:w-[270px] lg:w-[310px] xl:w-[340px] 2xl:w-[400px]`), "Thank You!" / "Any Questions?", "Replay Presentation" button, and dual summary capsules.

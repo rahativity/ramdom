@@ -36,26 +36,26 @@ export const Slide06WorkingTogether: React.FC<Slide06WorkingTogetherProps> = ({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col justify-start lg:justify-center gap-2 lg:gap-3 px-5 sm:px-10 lg:px-14 xl:px-16 py-2 lg:py-3 overflow-y-auto lg:overflow-hidden"
+      className="w-full h-full flex flex-col justify-start lg:justify-center gap-2 lg:gap-2.5 2xl:gap-4 px-4 sm:px-8 lg:px-8 xl:px-10 py-1.5 lg:py-2 2xl:py-4 overflow-y-auto lg:overflow-hidden"
     >
       {/* Slide Headline & Integrated Formula Badge */}
-      <div className="work-head flex flex-col sm:flex-row sm:items-end justify-between gap-2 max-w-[1160px] w-full mx-auto shrink-0">
+      <div className="work-head flex flex-col sm:flex-row sm:items-end justify-between gap-2 max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px] w-full mx-auto shrink-0">
         <div>
-          <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#102A50] tracking-tight leading-tight mb-0.5">
+          <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] xl:text-[38px] 2xl:text-[44px] text-[#102A50] tracking-tight leading-tight mb-0.5">
             One Instruction. A Coordinated Process.
           </h2>
-          <p className="text-sm sm:text-base text-[#102A50]/75 font-normal">
+          <p className="text-sm sm:text-base xl:text-lg text-[#102A50]/75 font-normal">
             Watch the processor execute an instruction.
           </p>
         </div>
 
         {/* Highlighted Instruction Formula Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#2868E8]/20 shadow-xs self-start sm:self-auto shrink-0">
-          <span className="text-xs font-mono font-semibold text-[#1B54C7]">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-[#2868E8]/20 shadow-xs self-start sm:self-auto shrink-0">
+          <span className="text-xs xl:text-[13px] font-mono font-semibold text-[#1B54C7]">
             ADD R1, R2, R3
           </span>
-          <span className="text-xs font-mono text-[#102A50]/70" aria-hidden="true">•</span>
-          <span className="text-xs font-mono font-bold text-[#102A50]">
+          <span className="text-xs xl:text-[13px] font-mono text-[#102A50]/70" aria-hidden="true">•</span>
+          <span className="text-xs xl:text-[13px] font-mono font-bold text-[#102A50]">
             R1 ← 5 + 3 = 8
           </span>
         </div>
