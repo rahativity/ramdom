@@ -18,8 +18,18 @@ export const Slide03DataPath: React.FC<Slide03DataPathProps> = ({
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.dp-head',
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.65, ease: 'power3.out' }
+        { y: 25, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
+      );
+      gsap.fromTo(
+        '.dp-panel',
+        { x: -20, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, delay: 0.15, ease: 'power3.out' }
+      );
+      gsap.fromTo(
+        '.dp-bullet',
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, delay: 0.3, ease: 'power2.out' }
       );
     }, containerRef);
 
@@ -29,11 +39,11 @@ export const Slide03DataPath: React.FC<Slide03DataPathProps> = ({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col justify-between px-6 sm:px-12 py-6"
+      className="w-full h-full flex flex-col justify-between px-6 sm:px-12 py-5"
     >
-      {/* Slide Headline */}
+      {/* Slide Headline & Supporting Text */}
       <div className="dp-head max-w-2xl">
-        <h2 className="font-heading font-bold text-3xl sm:text-4xl text-[#102A50] tracking-tight mb-2">
+        <h2 className="font-heading font-bold text-3xl sm:text-4xl text-[#102A50] tracking-tight mb-1.5">
           Where Data Comes to Life.
         </h2>
         <p className="text-base sm:text-lg text-[#102A50]/70 font-normal">
@@ -41,9 +51,51 @@ export const Slide03DataPath: React.FC<Slide03DataPathProps> = ({
         </p>
       </div>
 
-      {/* Main Vector Architectural Pipeline Diagram */}
-      <div className="flex-1 flex items-center justify-center my-auto">
-        <DataPathDiagram currentBeat={currentBeat} isAutoPlay={isAutoPlay} />
+      {/* Main Composition: 30-35% Educational Column + 65-70% Enlarged Diagram */}
+      <div className="flex-1 grid grid-cols-12 gap-6 items-center my-auto w-full max-w-6xl mx-auto">
+        {/* Left Side (32%): Concise Educational Bullet Points */}
+        <div className="dp-panel col-span-12 lg:col-span-4 flex flex-col">
+          <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#2868E8]/20 shadow-sm">
+            <span className="text-xs font-mono font-bold tracking-wider uppercase text-[#2868E8] mb-2 block">
+              Core Mechanisms
+            </span>
+            <h3 className="font-heading font-bold text-lg text-[#102A50] mb-3">
+              Data Flow Pipeline
+            </h3>
+
+            <ul className="space-y-3 text-xs sm:text-sm text-[#102A50]/80">
+              <li className="dp-bullet flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-[#2868E8] mt-1.5 shrink-0" />
+                <span>
+                  <strong className="text-[#2868E8] font-semibold">Registers</strong> store temporary data.
+                </span>
+              </li>
+              <li className="dp-bullet flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-[#2868E8] mt-1.5 shrink-0" />
+                <span>
+                  <strong className="text-[#2868E8] font-semibold">ALU</strong> performs arithmetic and logic.
+                </span>
+              </li>
+              <li className="dp-bullet flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-[#2868E8] mt-1.5 shrink-0" />
+                <span>
+                  <strong className="text-[#2868E8] font-semibold">Buses</strong> transfer data between components.
+                </span>
+              </li>
+              <li className="dp-bullet flex items-start gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-[#2868E8] mt-1.5 shrink-0" />
+                <span>
+                  <strong className="text-[#2868E8] font-semibold">Results</strong> move to destination registers.
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Right Side (68%): Enlarged Vector Datapath Diagram */}
+        <div className="col-span-12 lg:col-span-8 flex items-center justify-center">
+          <DataPathDiagram currentBeat={currentBeat} isAutoPlay={isAutoPlay} />
+        </div>
       </div>
 
       {/* Discrete Bottom Technical Annotation */}
@@ -54,4 +106,3 @@ export const Slide03DataPath: React.FC<Slide03DataPathProps> = ({
     </div>
   );
 };
-

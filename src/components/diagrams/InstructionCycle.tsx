@@ -32,43 +32,43 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
   }, [beat]);
 
   const stages = [
-    { id: 0, label: '1. FETCH', desc: 'Instruction fetched into IR' },
-    { id: 1, label: '2. DECODE', desc: 'Controller decodes opcode' },
-    { id: 2, label: '3. EXECUTE', desc: 'ALU performs 5 + 3' },
-    { id: 3, label: '4. WRITE BACK', desc: 'R1 updated from 0 → 8' },
+    { id: 0, label: '1. FETCH', desc: 'Fetch the instruction.' },
+    { id: 1, label: '2. DECODE', desc: 'Decode the operation.' },
+    { id: 2, label: '3. EXECUTE', desc: 'Execute through the ALU.' },
+    { id: 3, label: '4. WRITE BACK', desc: 'Write the result back.' },
   ];
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center p-3 sm:p-5 ${className}`}
+      className={`relative w-full max-w-6xl mx-auto flex flex-col items-center justify-center ${className}`}
     >
       {/* Visual Domain Headers (Controller vs Datapath boundary) */}
-      <div className="w-full grid grid-cols-2 gap-4 mb-3 px-2">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#2868E8]/8 border border-[#2868E8]/20">
+      <div className="w-full grid grid-cols-2 gap-4 mb-2 px-2">
+        <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#2868E8]/8 border border-[#2868E8]/20">
           <div className="w-2.5 h-2.5 rounded-full bg-[#2868E8]" />
           <span className="text-xs font-bold tracking-wide uppercase font-heading text-[#102A50]">
             Controller Domain
           </span>
-          <span className="text-[11px] text-[#102A50]/60 hidden sm:inline">
+          <span className="text-[11px] text-[#102A50]/65 hidden sm:inline">
             (Decides & Coordinates)
           </span>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#102A50]/5 border border-[#102A50]/15">
+        <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[#102A50]/5 border border-[#102A50]/15">
           <div className="w-2.5 h-2.5 rounded-full bg-[#102A50]" />
           <span className="text-xs font-bold tracking-wide uppercase font-heading text-[#102A50]">
             Data Path Domain
           </span>
-          <span className="text-[11px] text-[#102A50]/60 hidden sm:inline">
+          <span className="text-[11px] text-[#102A50]/65 hidden sm:inline">
             (Moves & Processes Data)
           </span>
         </div>
       </div>
 
-      {/* Main SVG Architectural Schematic */}
+      {/* Main SVG Architectural Schematic - Optimized viewBox to fit comfortably in 16:9 */}
       <svg
-        viewBox="0 0 960 400"
-        className="w-full h-auto drop-shadow-md select-none bg-white rounded-2xl border border-[#2868E8]/15 p-2"
+        viewBox="0 0 980 375"
+        className="w-full h-auto drop-shadow-sm select-none bg-white rounded-2xl border border-[#2868E8]/15 p-2"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -93,13 +93,13 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
 
         {/* --- BUS 1: INSTRUCTION TO CONTROLLER (FETCH -> DECODE) --- */}
         <path
-          d="M 230 100 L 320 100"
+          d="M 235 90 L 330 90"
           stroke={beat >= 1 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
+          strokeWidth="3.5"
           strokeOpacity={beat >= 1 ? '1' : '0.2'}
         />
         <polygon
-          points="318,96 326,100 318,104"
+          points="328,85 338,90 328,95"
           fill={beat >= 1 ? '#2868E8' : '#102A50'}
           opacity={beat >= 1 ? '1' : '0.3'}
         />
@@ -107,33 +107,33 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
         {/* --- BUS 2: CONTROL SIGNALS (DECODE -> REGISTERS & ALU) --- */}
         {/* Signal to Register File (RegRead) */}
         <path
-          d="M 400 150 L 400 230 L 260 230"
+          d="M 415 145 L 415 220 L 265 220"
           stroke={beat >= 1 ? '#2868E8' : '#102A50'}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeDasharray="6 4"
           strokeOpacity={beat >= 1 ? '1' : '0.2'}
         />
         {beat >= 1 && (
           <path
-            d="M 400 150 L 400 230 L 260 230"
+            d="M 415 145 L 415 220 L 265 220"
             stroke="#6CA1FF"
-            strokeWidth="3"
+            strokeWidth="3.5"
             strokeDasharray="8 16"
             className="active-bus-pulse"
             filter="url(#glowBeat)"
           />
         )}
         <polygon
-          points="262,226 254,230 262,234"
+          points="267,215 257,220 267,225"
           fill={beat >= 1 ? '#2868E8' : '#102A50'}
           opacity={beat >= 1 ? '1' : '0.3'}
         />
         <text
-          x="350"
-          y="222"
+          x="345"
+          y="212"
           textAnchor="middle"
           fill={beat >= 1 ? '#2868E8' : '#102A50'}
-          fontSize="10"
+          fontSize="11"
           fontWeight="700"
           fontFamily="JetBrains Mono, monospace"
         >
@@ -142,33 +142,33 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
 
         {/* Signal to ALU (ALUOp: ADD) */}
         <path
-          d="M 480 130 L 680 130 L 680 200"
+          d="M 505 120 L 695 120 L 695 188"
           stroke={beat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeDasharray="6 4"
           strokeOpacity={beat >= 2 ? '1' : '0.2'}
         />
         {beat >= 2 && (
           <path
-            d="M 480 130 L 680 130 L 680 200"
+            d="M 505 120 L 695 120 L 695 188"
             stroke="#6CA1FF"
-            strokeWidth="3"
+            strokeWidth="3.5"
             strokeDasharray="8 16"
             className="active-bus-pulse"
             filter="url(#glowBeat)"
           />
         )}
         <polygon
-          points="676,198 680,206 684,198"
+          points="690,186 695,196 700,186"
           fill={beat >= 2 ? '#2868E8' : '#102A50'}
           opacity={beat >= 2 ? '1' : '0.3'}
         />
         <text
-          x="580"
-          y="122"
+          x="600"
+          y="110"
           textAnchor="middle"
           fill={beat >= 2 ? '#2868E8' : '#102A50'}
-          fontSize="10"
+          fontSize="11"
           fontWeight="700"
           fontFamily="JetBrains Mono, monospace"
         >
@@ -178,44 +178,44 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
         {/* --- BUS 3: DATA BUS (REGISTERS -> ALU) --- */}
         {/* R2 (5) to ALU Input A */}
         <path
-          d="M 250 270 L 600 270 L 620 250"
+          d="M 255 258 L 610 258 L 635 238"
           stroke={beat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="3.5"
+          strokeWidth="4"
           strokeOpacity={beat >= 2 ? '1' : '0.2'}
         />
         {/* R3 (3) to ALU Input B */}
         <path
-          d="M 250 310 L 600 310 L 620 290"
+          d="M 255 298 L 610 298 L 635 280"
           stroke={beat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="3.5"
+          strokeWidth="4"
           strokeOpacity={beat >= 2 ? '1' : '0.2'}
         />
 
         {/* --- BUS 4: WRITE-BACK BUS (ALU RESULT -> REGISTER FILE R1) --- */}
         <path
-          d="M 740 270 L 880 270 L 880 370 L 150 370 L 150 340"
+          d="M 755 258 L 895 258 L 895 348 L 145 348 L 145 325"
           stroke={beat === 3 ? '#2868E8' : '#102A50'}
-          strokeWidth="3.5"
+          strokeWidth="4"
           strokeOpacity={beat === 3 ? '1' : '0.2'}
         />
         {beat === 3 && (
           <path
-            d="M 740 270 L 880 270 L 880 370 L 150 370 L 150 340"
+            d="M 755 258 L 895 258 L 895 348 L 145 348 L 145 325"
             stroke="#6CA1FF"
-            strokeWidth="4"
+            strokeWidth="4.5"
             strokeDasharray="12 24"
             className="active-bus-pulse"
             filter="url(#glowBeat)"
           />
         )}
         <polygon
-          points="146,342 150,334 154,342"
+          points="140,327 145,317 150,327"
           fill={beat === 3 ? '#2868E8' : '#102A50'}
           opacity={beat === 3 ? '1' : '0.25'}
         />
         <text
-          x="515"
-          y="386"
+          x="525"
+          y="364"
           textAnchor="middle"
           fill={beat === 3 ? '#2868E8' : '#102A50'}
           fontSize="11"
@@ -228,18 +228,18 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
         {/* --- COMPONENT 1: INSTRUCTION REGISTER (IR) --- */}
         <g id="instruction-reg">
           <rect
-            x="40"
-            y="65"
-            width="190"
-            height="70"
-            rx="12"
+            x="35"
+            y="52"
+            width="200"
+            height="72"
+            rx="14"
             fill="url(#irGrad)"
-            stroke={beat >= 0 ? '#2868E8' : 'rgba(40, 104, 232, 0.2)'}
-            strokeWidth={beat === 0 ? '2.5' : '1.5'}
+            stroke={beat >= 0 ? '#2868E8' : 'rgba(40, 104, 232, 0.25)'}
+            strokeWidth={beat === 0 ? '2.8' : '1.8'}
           />
           <text
             x="135"
-            y="90"
+            y="78"
             textAnchor="middle"
             fill="#102A50"
             fontSize="12"
@@ -250,10 +250,10 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
           </text>
           <text
             x="135"
-            y="115"
+            y="104"
             textAnchor="middle"
             fill="#2868E8"
-            fontSize="13"
+            fontSize="14"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -264,33 +264,33 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
         {/* --- COMPONENT 2: CONTROLLER --- */}
         <g id="master-controller">
           <rect
-            x="326"
-            y="55"
-            width="154"
-            height="90"
+            x="335"
+            y="42"
+            width="170"
+            height="94"
             rx="16"
             fill="url(#ctrlGrad)"
             stroke={beat >= 1 ? '#2868E8' : '#102A50'}
-            strokeWidth={beat === 1 ? '3' : '2'}
+            strokeWidth={beat === 1 ? '3.2' : '2'}
             filter={beat === 1 ? 'url(#glowBeat)' : undefined}
           />
           <text
-            x="403"
-            y="95"
+            x="420"
+            y="82"
             textAnchor="middle"
             fill="#FFFFFF"
-            fontSize="16"
+            fontSize="17"
             fontWeight="700"
             fontFamily="Space Grotesk, sans-serif"
           >
             Controller
           </text>
           <text
-            x="403"
-            y="118"
+            x="420"
+            y="106"
             textAnchor="middle"
             fill="#94BDFF"
-            fontSize="10"
+            fontSize="11"
             fontWeight="600"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -301,18 +301,18 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
         {/* --- COMPONENT 3: REGISTER FILE --- */}
         <g id="register-file">
           <rect
-            x="40"
-            y="190"
-            width="210"
-            height="145"
-            rx="14"
+            x="35"
+            y="172"
+            width="220"
+            height="146"
+            rx="16"
             fill="#FFFFFF"
             stroke={beat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
-            strokeWidth={beat === 1 || beat === 3 ? '2.5' : '1.5'}
+            strokeWidth={beat === 1 || beat === 3 ? '2.8' : '1.8'}
           />
           <text
             x="145"
-            y="215"
+            y="198"
             textAnchor="middle"
             fill="#102A50"
             fontSize="13"
@@ -324,19 +324,19 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
 
           {/* R2 row */}
           <rect
-            x="55"
-            y="230"
-            width="180"
+            x="50"
+            y="214"
+            width="190"
             height="26"
             rx="6"
             fill={beat >= 1 ? '#EBF2FF' : '#F8FAFF'}
             stroke="#2868E8"
-            strokeWidth={beat >= 1 ? '1.5' : '0.5'}
-            strokeOpacity="0.4"
+            strokeWidth={beat >= 1 ? '1.8' : '0.8'}
+            strokeOpacity="0.5"
           />
           <text
-            x="70"
-            y="247"
+            x="65"
+            y="232"
             fill="#102A50"
             fontSize="11"
             fontWeight="600"
@@ -345,11 +345,11 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
             R2 (Source A):
           </text>
           <text
-            x="215"
-            y="247"
+            x="225"
+            y="232"
             textAnchor="end"
             fill="#2868E8"
-            fontSize="12"
+            fontSize="13"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -358,19 +358,19 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
 
           {/* R3 row */}
           <rect
-            x="55"
-            y="262"
-            width="180"
+            x="50"
+            y="246"
+            width="190"
             height="26"
             rx="6"
             fill={beat >= 1 ? '#EBF2FF' : '#F8FAFF'}
             stroke="#2868E8"
-            strokeWidth={beat >= 1 ? '1.5' : '0.5'}
-            strokeOpacity="0.4"
+            strokeWidth={beat >= 1 ? '1.8' : '0.8'}
+            strokeOpacity="0.5"
           />
           <text
-            x="70"
-            y="279"
+            x="65"
+            y="264"
             fill="#102A50"
             fontSize="11"
             fontWeight="600"
@@ -379,11 +379,11 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
             R3 (Source B):
           </text>
           <text
-            x="215"
-            y="279"
+            x="225"
+            y="264"
             textAnchor="end"
             fill="#2868E8"
-            fontSize="12"
+            fontSize="13"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -392,18 +392,18 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
 
           {/* R1 row (Destination) */}
           <rect
-            x="55"
-            y="294"
-            width="180"
+            x="50"
+            y="278"
+            width="190"
             height="26"
             rx="6"
             fill={beat === 3 ? '#2868E8' : '#F8FAFF'}
             stroke={beat === 3 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
-            strokeWidth={beat === 3 ? '2' : '0.5'}
+            strokeWidth={beat === 3 ? '2.2' : '0.8'}
           />
           <text
-            x="70"
-            y="311"
+            x="65"
+            y="296"
             fill={beat === 3 ? '#FFFFFF' : '#102A50'}
             fontSize="11"
             fontWeight="600"
@@ -412,11 +412,11 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
             R1 (Dest):
           </text>
           <text
-            x="215"
-            y="311"
+            x="225"
+            y="296"
             textAnchor="end"
             fill={beat === 3 ? '#FFFFFF' : '#102A50'}
-            fontSize="12"
+            fontSize="13"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -427,29 +427,29 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
         {/* --- COMPONENT 4: ALU --- */}
         <g id="master-alu">
           <path
-            d="M 626 210 L 734 245 L 734 305 L 626 340 L 626 288 L 642 275 L 626 262 Z"
+            d="M 640 192 L 755 232 L 755 296 L 640 334 L 640 278 L 658 263 L 640 248 Z"
             fill="url(#aluMainGrad)"
             stroke={beat >= 2 ? '#2868E8' : '#102A50'}
-            strokeWidth={beat === 2 ? '3' : '2'}
+            strokeWidth={beat === 2 ? '3.5' : '2.2'}
             filter={beat === 2 ? 'url(#glowBeat)' : undefined}
           />
           <text
-            x="676"
-            y="270"
+            x="695"
+            y="258"
             textAnchor="middle"
             fill="#FFFFFF"
-            fontSize="16"
+            fontSize="18"
             fontWeight="700"
             fontFamily="Space Grotesk, sans-serif"
           >
             ALU
           </text>
           <text
-            x="676"
-            y="288"
+            x="695"
+            y="278"
             textAnchor="middle"
             fill="#94BDFF"
-            fontSize="10"
+            fontSize="11"
             fontWeight="600"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -458,8 +458,8 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
         </g>
       </svg>
 
-      {/* Interactive 4-Stage Control Strip */}
-      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-3 select-none">
+      {/* Interactive 4-Stage Supporting Sequence Strip */}
+      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-2 select-none">
         {stages.map((stg) => {
           const isCurrent = stg.id === beat;
           const isCompleted = stg.id < beat;
@@ -467,7 +467,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
             <button
               key={stg.id}
               onClick={() => onSelectBeat?.(stg.id)}
-              className={`p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+              className={`p-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
                 isCurrent
                   ? 'bg-white border-[#2868E8] shadow-sm ring-2 ring-[#2868E8]/20'
                   : isCompleted
@@ -475,7 +475,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
                   : 'bg-white/40 border-[#102A50]/10 hover:bg-white/60'
               }`}
             >
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between mb-0.5">
                 <span className={`text-xs font-bold font-mono ${isCurrent ? 'text-[#2868E8]' : 'text-[#102A50]'}`}>
                   {stg.label}
                 </span>
@@ -485,7 +485,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
                   <span className="w-2 h-2 rounded-full bg-[#2868E8] animate-ping" />
                 ) : null}
               </div>
-              <p className="text-[11px] text-[#102A50]/70 font-sans leading-tight">
+              <p className="text-[11px] text-[#102A50]/80 font-sans leading-tight">
                 {stg.desc}
               </p>
             </button>

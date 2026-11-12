@@ -19,17 +19,13 @@ This project translates the visual language of the presentation deck reference:
 
 ## 📑 Exactly Seven Slides
 
-1. **Slide 01 — Welcome:** Editorial headline, 2.5D isometric CPU chip on a glowing pedestal with circuit traces, and interactive "Let's Explore" button.
-2. **Slide 02 — Architecture Overview:** Dual domain cards with a split CPU die showcasing the cooperative boundary between Data Path and Controller.
-3. **Slide 03 — Data Path:** Complete vector datapath pipeline showing data packet flow for `5 + 3 = 8` (`Input → Registers → ALU → Destination Register → Output`).
-4. **Slide 04 — Controller:** Opcode decoder, state machine, and radiating control signal buses (`RegRead`, `ALUOp`, `RegWrite`) with feedback timing loops.
-5. **Slide 05 — Key Differences:** High-contrast comparison table with custom hardware icons and an animated digital balance scale illustrating architectural equilibrium.
-6. **Slide 06 — Working Together (Centerpiece):** Coordinated execution of instruction `ADD R1, R2, R3` across 4 interactive stages:
-   - **FETCH:** Instruction latched into Instruction Register.
-   - **DECODE:** Controller decodes opcode, primes `RegRead=1` and `ALUOp=ADD`.
-   - **EXECUTE:** Operands (5, 3) flow into ALU, result calculated (`5 + 3 = 8`).
-   - **WRITE BACK:** Result `8` travels via the Write-Back Bus into register R1.
-7. **Slide 07 — Thank You!:** Polished closing slide featuring the smiling mascot CPU die and presentation replay controls.
+1. **Slide 01 — Welcome:** Editorial headline, 2.5D isometric CPU chip on a glowing pedestal with circuit traces, and interactive "Let's Explore" button (preserved completely unchanged).
+2. **Slide 02 — Architecture Overview:** Dual domain cards with concise educational bullet points flanking an enlarged 2.5D split CPU die showcasing the cooperative boundary between Data Path and Controller.
+3. **Slide 03 — Data Path:** 32% educational panel paired with a 68% enlarged vector datapath pipeline showing animated packet flow for `5 + 3 = 8` (`Input → Registers → ALU → Destination Register → Output`).
+4. **Slide 04 — Controller:** 32% educational panel paired with a 68% enlarged controller architecture schematic showing opcode decoder, state machine, and radiating control buses (`RegRead`, `ALUOp`, `RegWrite`) with feedback timing loop.
+5. **Slide 05 — Key Differences:** Enlarged comparison table with custom hardware icons and a digital balance scale card featuring the integrated takeaway: *"Data Path performs. Controller coordinates."*
+6. **Slide 06 — Working Together (Centerpiece):** Significantly enlarged master CPU schematic executing `ADD R1, R2, R3` (`R2=5, R3=3 → R1=8`) coordinated with a 4-step sequence (Fetch, Decode, Execute, Write Back).
+7. **Slide 07 — Thank You!:** Polished closing slide featuring the smiling mascot CPU die and presentation replay controls (preserved completely unchanged).
 
 ---
 

@@ -22,21 +22,21 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
       if (activeBeat === 1 || activeBeat >= 2) {
         gsap.fromTo(
           '.packet-in-a',
-          { cx: 120, opacity: 0 },
-          { cx: 220, opacity: 1, duration: 0.65, ease: 'power2.out' }
+          { cx: 125, opacity: 0 },
+          { cx: 235, opacity: 1, duration: 0.65, ease: 'power2.out' }
         );
         gsap.fromTo(
           '.packet-in-b',
-          { cx: 120, opacity: 0 },
-          { cx: 220, opacity: 1, duration: 0.65, ease: 'power2.out' }
+          { cx: 125, opacity: 0 },
+          { cx: 235, opacity: 1, duration: 0.65, ease: 'power2.out' }
         );
       }
 
       // ALU calculation pulse
       if (activeBeat >= 2) {
         gsap.to('.alu-glow', {
-          opacity: 0.9,
-          scale: 1.04,
+          opacity: 0.95,
+          scale: 1.05,
           repeat: 1,
           yoyo: true,
           duration: 0.4,
@@ -48,8 +48,8 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
       if (activeBeat >= 3) {
         gsap.fromTo(
           '.packet-out',
-          { cx: 550, opacity: 0 },
-          { cx: 640, opacity: 1, duration: 0.75, ease: 'power2.out' }
+          { cx: 585, opacity: 0 },
+          { cx: 680, opacity: 1, duration: 0.75, ease: 'power2.out' }
         );
       }
     }, containerRef);
@@ -60,11 +60,11 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-4 sm:p-6 ${className}`}
+      className={`relative w-full flex flex-col items-center justify-center ${className}`}
     >
-      {/* SVG Circuit Canvas for Datapath */}
+      {/* SVG Circuit Canvas for Datapath - Scaled up for optimal legibility */}
       <svg
-        viewBox="0 0 880 340"
+        viewBox="0 0 920 340"
         className="w-full h-auto drop-shadow-sm select-none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -84,108 +84,108 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
           </filter>
         </defs>
 
-        {/* --- CONNECTING BUSES (SVG PATHS) --- */}
+        {/* --- CONNECTING BUSES (Bolder 3.5px strokes for high visual dominance) --- */}
         {/* Bus from Input to Registers */}
         <path
-          d="M 120 120 L 220 120"
+          d="M 125 115 L 235 115"
           stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
-          strokeOpacity={activeBeat >= 1 ? '0.9' : '0.2'}
+          strokeWidth="3.5"
+          strokeOpacity={activeBeat >= 1 ? '0.95' : '0.2'}
         />
         <path
-          d="M 120 220 L 220 220"
+          d="M 125 225 L 235 225"
           stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
-          strokeOpacity={activeBeat >= 1 ? '0.9' : '0.2'}
+          strokeWidth="3.5"
+          strokeOpacity={activeBeat >= 1 ? '0.95' : '0.2'}
         />
 
         {/* Dynamic moving data packet circles */}
-        <circle className="packet-in-a opacity-0" cx="120" cy="120" r="5" fill="#2868E8" filter="url(#glowBlue)" />
-        <circle className="packet-in-b opacity-0" cx="120" cy="220" r="5" fill="#2868E8" filter="url(#glowBlue)" />
+        <circle className="packet-in-a opacity-0" cx="125" cy="115" r="6" fill="#2868E8" filter="url(#glowBlue)" />
+        <circle className="packet-in-b opacity-0" cx="125" cy="225" r="6" fill="#2868E8" filter="url(#glowBlue)" />
 
         {/* Bus from Registers to ALU */}
         <path
-          d="M 320 120 L 410 120 L 410 145 L 430 145"
+          d="M 345 115 L 435 115 L 435 142 L 455 142"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
-          strokeOpacity={activeBeat >= 2 ? '0.9' : '0.2'}
+          strokeWidth="3.5"
+          strokeOpacity={activeBeat >= 2 ? '0.95' : '0.2'}
         />
         <path
-          d="M 320 220 L 410 220 L 410 195 L 430 195"
+          d="M 345 225 L 435 225 L 435 198 L 455 198"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
-          strokeOpacity={activeBeat >= 2 ? '0.9' : '0.2'}
+          strokeWidth="3.5"
+          strokeOpacity={activeBeat >= 2 ? '0.95' : '0.2'}
         />
 
         {/* Bus from ALU to Destination Register */}
         <path
-          d="M 550 170 L 640 170"
+          d="M 585 170 L 680 170"
           stroke={activeBeat >= 3 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
-          strokeOpacity={activeBeat >= 3 ? '0.9' : '0.2'}
+          strokeWidth="3.5"
+          strokeOpacity={activeBeat >= 3 ? '0.95' : '0.2'}
         />
         {/* Result packet circle */}
-        <circle className="packet-out opacity-0" cx="550" cy="170" r="5.5" fill="#2868E8" filter="url(#glowBlue)" />
+        <circle className="packet-out opacity-0" cx="585" cy="170" r="6.5" fill="#2868E8" filter="url(#glowBlue)" />
 
         {/* Bus from Destination Register to Output */}
         <path
-          d="M 740 170 L 800 170"
+          d="M 790 170 L 845 170"
           stroke={activeBeat >= 3 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
-          strokeOpacity={activeBeat >= 3 ? '0.9' : '0.2'}
+          strokeWidth="3.5"
+          strokeOpacity={activeBeat >= 3 ? '0.95' : '0.2'}
         />
 
         {/* --- ARROWS ON BUSES --- */}
         <polygon
-          points="218,116 226,120 218,124"
+          points="233,110 242,115 233,120"
           fill={activeBeat >= 1 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 1 ? '1' : '0.3'}
         />
         <polygon
-          points="218,216 226,220 218,224"
+          points="233,220 242,225 233,230"
           fill={activeBeat >= 1 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 1 ? '1' : '0.3'}
         />
         <polygon
-          points="428,141 436,145 428,149"
+          points="453,137 462,142 453,147"
           fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 2 ? '1' : '0.3'}
         />
         <polygon
-          points="428,191 436,195 428,199"
+          points="453,193 462,198 453,203"
           fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 2 ? '1' : '0.3'}
         />
         <polygon
-          points="638,166 646,170 638,174"
+          points="678,165 687,170 678,175"
           fill={activeBeat >= 3 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 3 ? '1' : '0.3'}
         />
         <polygon
-          points="798,166 806,170 798,174"
+          points="843,165 852,170 843,175"
           fill={activeBeat >= 3 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 3 ? '1' : '0.3'}
         />
 
-        {/* --- STAGE 1: INPUT DATA BLOCKS --- */}
+        {/* --- STAGE 1: INPUT DATA BLOCKS (Enlarged for high readability) --- */}
         <g id="input-data-block">
           {/* Input A card */}
           <rect
-            x="20"
-            y="92"
-            width="100"
-            height="56"
-            rx="12"
+            x="15"
+            y="85"
+            width="110"
+            height="60"
+            rx="14"
             fill="url(#cardGrad)"
-            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(40, 104, 232, 0.2)'}
-            strokeWidth="1.5"
+            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(40, 104, 232, 0.25)'}
+            strokeWidth="1.8"
           />
           <text
             x="70"
-            y="116"
+            y="110"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="12"
+            fontSize="13"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
@@ -193,10 +193,10 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
           </text>
           <text
             x="70"
-            y="136"
+            y="133"
             textAnchor="middle"
             fill="#2868E8"
-            fontSize="15"
+            fontSize="18"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -205,21 +205,21 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
 
           {/* Input B card */}
           <rect
-            x="20"
-            y="192"
-            width="100"
-            height="56"
-            rx="12"
+            x="15"
+            y="195"
+            width="110"
+            height="60"
+            rx="14"
             fill="url(#cardGrad)"
-            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(40, 104, 232, 0.2)'}
-            strokeWidth="1.5"
+            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(40, 104, 232, 0.25)'}
+            strokeWidth="1.8"
           />
           <text
             x="70"
-            y="216"
+            y="220"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="12"
+            fontSize="13"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
@@ -227,10 +227,10 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
           </text>
           <text
             x="70"
-            y="236"
+            y="243"
             textAnchor="middle"
             fill="#2868E8"
-            fontSize="15"
+            fontSize="18"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -242,32 +242,32 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
         <g id="registers-stage">
           {/* Register R2 */}
           <rect
-            x="226"
-            y="88"
-            width="94"
-            height="64"
-            rx="12"
+            x="242"
+            y="80"
+            width="104"
+            height="70"
+            rx="14"
             fill={activeBeat >= 1 ? '#FFFFFF' : '#F8FAFF'}
-            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.15)'}
-            strokeWidth={activeBeat >= 1 ? '2' : '1.5'}
+            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
+            strokeWidth={activeBeat >= 1 ? '2.2' : '1.5'}
           />
           <text
-            x="273"
-            y="113"
+            x="294"
+            y="107"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="11"
+            fontSize="12"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
             Register R2
           </text>
           <text
-            x="273"
-            y="138"
+            x="294"
+            y="135"
             textAnchor="middle"
             fill={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.4)'}
-            fontSize="16"
+            fontSize="20"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -276,32 +276,32 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
 
           {/* Register R3 */}
           <rect
-            x="226"
-            y="188"
-            width="94"
-            height="64"
-            rx="12"
+            x="242"
+            y="190"
+            width="104"
+            height="70"
+            rx="14"
             fill={activeBeat >= 1 ? '#FFFFFF' : '#F8FAFF'}
-            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.15)'}
-            strokeWidth={activeBeat >= 1 ? '2' : '1.5'}
+            stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
+            strokeWidth={activeBeat >= 1 ? '2.2' : '1.5'}
           />
           <text
-            x="273"
-            y="213"
+            x="294"
+            y="217"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="11"
+            fontSize="12"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
             Register R3
           </text>
           <text
-            x="273"
-            y="238"
+            x="294"
+            y="245"
             textAnchor="middle"
             fill={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.4)'}
-            fontSize="16"
+            fontSize="20"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -309,34 +309,33 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
           </text>
         </g>
 
-        {/* --- STAGE 3: ALU (ARITHMETIC LOGIC UNIT) --- */}
+        {/* --- STAGE 3: ALU (Enlarged & Prominent) --- */}
         <g id="alu-unit" className={activeBeat >= 2 ? 'alu-glow' : ''}>
-          {/* Classic ALU V-shape chevron / trapezoid geometry */}
           <path
-            d="M 436 100 L 544 135 L 544 205 L 436 240 L 436 185 L 452 170 L 436 155 Z"
+            d="M 462 90 L 580 130 L 580 210 L 462 250 L 462 188 L 480 170 L 462 152 Z"
             fill="url(#aluGrad)"
             stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-            strokeWidth="2.5"
+            strokeWidth="3"
             filter={activeBeat >= 2 ? 'url(#glowBlue)' : undefined}
           />
           <text
-            x="486"
-            y="166"
+            x="520"
+            y="164"
             textAnchor="middle"
             fill="#FFFFFF"
-            fontSize="18"
+            fontSize="20"
             fontWeight="700"
             fontFamily="Space Grotesk, sans-serif"
-            letterSpacing="1"
+            letterSpacing="1.5"
           >
             ALU
           </text>
           <text
-            x="486"
-            y="185"
+            x="520"
+            y="186"
             textAnchor="middle"
             fill="#94BDFF"
-            fontSize="10"
+            fontSize="11"
             fontWeight="600"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -347,32 +346,32 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
         {/* --- STAGE 4: DESTINATION REGISTER (R1) --- */}
         <g id="dest-register">
           <rect
-            x="646"
-            y="136"
-            width="94"
-            height="68"
-            rx="12"
+            x="686"
+            y="132"
+            width="104"
+            height="76"
+            rx="14"
             fill={activeBeat >= 3 ? '#FFFFFF' : '#F8FAFF'}
-            stroke={activeBeat >= 3 ? '#2868E8' : 'rgba(16, 42, 80, 0.15)'}
+            stroke={activeBeat >= 3 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
             strokeWidth={activeBeat >= 3 ? '2.5' : '1.5'}
           />
           <text
-            x="693"
-            y="162"
+            x="738"
+            y="160"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="11"
+            fontSize="12"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
             Register R1
           </text>
           <text
-            x="693"
-            y="188"
+            x="738"
+            y="190"
             textAnchor="middle"
             fill={activeBeat >= 3 ? '#2868E8' : 'rgba(16, 42, 80, 0.3)'}
-            fontSize="20"
+            fontSize="22"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -383,32 +382,32 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
         {/* --- STAGE 5: OUTPUT DATA BLOCK --- */}
         <g id="output-data-block">
           <rect
-            x="806"
-            y="142"
-            width="64"
-            height="56"
-            rx="12"
+            x="852"
+            y="138"
+            width="65"
+            height="64"
+            rx="14"
             fill="url(#cardGrad)"
-            stroke={activeBeat >= 3 ? '#2868E8' : 'rgba(40, 104, 232, 0.2)'}
-            strokeWidth="1.5"
+            stroke={activeBeat >= 3 ? '#2868E8' : 'rgba(40, 104, 232, 0.25)'}
+            strokeWidth="1.8"
           />
           <text
-            x="838"
-            y="166"
+            x="884"
+            y="164"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="10"
+            fontSize="11"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
             Output
           </text>
           <text
-            x="838"
-            y="186"
+            x="884"
+            y="188"
             textAnchor="middle"
             fill="#2868E8"
-            fontSize="16"
+            fontSize="18"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -416,14 +415,14 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
           </text>
         </g>
 
-        {/* --- BUS STATUS / LABELS --- */}
+        {/* --- BUS STATUS LABEL --- */}
         <text
-          x="440"
-          y="310"
+          x="480"
+          y="312"
           textAnchor="middle"
           fill="#102A50"
-          fillOpacity="0.6"
-          fontSize="12"
+          fillOpacity="0.65"
+          fontSize="13"
           fontWeight="500"
           fontFamily="Inter, sans-serif"
         >
@@ -432,7 +431,7 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
       </svg>
 
       {/* Discrete State Indicator Pill */}
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-3">
         <div className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 text-[#102A50] text-xs font-mono font-semibold shadow-sm flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#2868E8] animate-pulse" />
           <span>

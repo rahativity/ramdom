@@ -76,7 +76,7 @@ async function runQATest() {
     // Jump to Slide 5 using dot button
     console.log('👉 Navigating to Slide 05...');
     await page.click('button[aria-label="Jump to slide 5"]');
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1200));
     console.log('📸 5/7 Capturing Slide 05 (Key Differences & Balance Scale)...');
     await page.screenshot({ path: path.join(screenshotsDir, 'slide-05-comparison.png') });
 

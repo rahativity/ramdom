@@ -20,9 +20,9 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
     const ctx = gsap.context(() => {
       if (activeBeat >= 2) {
         gsap.to('.signal-pulse', {
-          strokeDashoffset: -30,
+          strokeDashoffset: -32,
           repeat: -1,
-          duration: 1.5,
+          duration: 1.4,
           ease: 'none',
           stagger: 0.2,
         });
@@ -35,10 +35,10 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-4 sm:p-6 ${className}`}
+      className={`relative w-full flex flex-col items-center justify-center ${className}`}
     >
       <svg
-        viewBox="0 0 880 340"
+        viewBox="0 0 920 340"
         className="w-full h-auto drop-shadow-sm select-none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             <stop offset="100%" stopColor="#F4F8FF" />
           </linearGradient>
           <filter id="glowSignal" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
@@ -61,79 +61,79 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
         {/* --- HORIZONTAL INSTRUCTION INPUT PIPELINE --- */}
         {/* Connection from Instruction to Decoder */}
         <path
-          d="M 180 130 L 250 130"
+          d="M 185 125 L 260 125"
           stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
+          strokeWidth="3.5"
           strokeOpacity={activeBeat >= 1 ? '1' : '0.2'}
         />
         <polygon
-          points="248,126 256,130 248,134"
+          points="258,120 268,125 258,130"
           fill={activeBeat >= 1 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 1 ? '1' : '0.3'}
         />
 
         {/* Connection from Decoder to Control Unit */}
         <path
-          d="M 370 130 L 440 130"
+          d="M 390 125 L 465 125"
           stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
-          strokeWidth="3"
+          strokeWidth="3.5"
           strokeOpacity={activeBeat >= 1 ? '1' : '0.2'}
         />
         <polygon
-          points="438,126 446,130 438,134"
+          points="463,120 473,125 463,130"
           fill={activeBeat >= 1 ? '#2868E8' : '#102A50'}
           opacity={activeBeat >= 1 ? '1' : '0.3'}
         />
 
         {/* --- CONTROL SIGNAL BUSES RADIATING FROM CONTROL UNIT --- */}
-        {/* Signal 1: RegRead (to Registers) */}
+        {/* Signal 1: RegRead */}
         <path
-          d="M 590 110 L 670 110 L 730 80"
+          d="M 625 105 L 705 105 L 755 75"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeOpacity={activeBeat >= 2 ? '1' : '0.25'}
         />
         {activeBeat >= 2 && (
           <path
-            d="M 590 110 L 670 110 L 730 80"
+            d="M 625 105 L 705 105 L 755 75"
             stroke="#6CA1FF"
-            strokeWidth="3"
+            strokeWidth="3.5"
             strokeDasharray="8 16"
             className="signal-pulse"
             filter="url(#glowSignal)"
           />
         )}
 
-        {/* Signal 2: ALUOp [ADD] (to ALU) */}
+        {/* Signal 2: ALUOp */}
         <path
-          d="M 590 130 L 730 130"
+          d="M 625 125 L 755 125"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeOpacity={activeBeat >= 2 ? '1' : '0.25'}
         />
         {activeBeat >= 2 && (
           <path
-            d="M 590 130 L 730 130"
+            d="M 625 125 L 755 125"
             stroke="#6CA1FF"
-            strokeWidth="3"
+            strokeWidth="3.5"
             strokeDasharray="8 16"
             className="signal-pulse"
             filter="url(#glowSignal)"
           />
         )}
 
-        {/* Signal 3: RegWrite (to Destination Register) */}
+        {/* Signal 3: RegWrite */}
         <path
-          d="M 590 150 L 670 150 L 730 180"
+          d="M 625 145 L 705 145 L 755 175"
           stroke={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeOpacity={activeBeat >= 2 ? '1' : '0.25'}
         />
         {activeBeat >= 2 && (
           <path
-            d="M 590 150 L 670 150 L 730 180"
+            d="M 625 145 L 705 145 L 755 175"
             stroke="#6CA1FF"
-            strokeWidth="3"
+            strokeWidth="3.5"
             strokeDasharray="8 16"
             className="signal-pulse"
             filter="url(#glowSignal)"
@@ -142,48 +142,48 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
 
         {/* Feedback / Timing Clock Loop to Controller */}
         <path
-          d="M 515 170 L 515 250 L 310 250 L 310 166"
+          d="M 545 180 L 545 255 L 325 255 L 325 168"
           stroke="#2868E8"
-          strokeWidth="2"
+          strokeWidth="2.5"
           strokeDasharray="6 4"
-          strokeOpacity={activeBeat >= 1 ? '0.6' : '0.2'}
+          strokeOpacity={activeBeat >= 1 ? '0.7' : '0.2'}
         />
         <polygon
-          points="306,168 310,160 314,168"
+          points="320,170 325,160 330,170"
           fill="#2868E8"
-          opacity={activeBeat >= 1 ? '0.8' : '0.3'}
+          opacity={activeBeat >= 1 ? '0.85' : '0.3'}
         />
         <text
-          x="410"
-          y="270"
+          x="435"
+          y="275"
           textAnchor="middle"
           fill="#102A50"
-          fillOpacity="0.6"
-          fontSize="11"
+          fillOpacity="0.65"
+          fontSize="12"
           fontWeight="500"
           fontFamily="JetBrains Mono, monospace"
         >
           Timing & Step Feedback Loop
         </text>
 
-        {/* --- BLOCK 1: INSTRUCTION INPUT --- */}
+        {/* --- BLOCK 1: INSTRUCTION INPUT (Enlarged) --- */}
         <g id="instruction-input">
           <rect
-            x="40"
-            y="96"
-            width="140"
-            height="68"
-            rx="14"
+            x="35"
+            y="90"
+            width="150"
+            height="72"
+            rx="16"
             fill="url(#cardGrad2)"
-            stroke={activeBeat >= 0 ? '#2868E8' : 'rgba(40, 104, 232, 0.2)'}
-            strokeWidth="1.5"
+            stroke={activeBeat >= 0 ? '#2868E8' : 'rgba(40, 104, 232, 0.25)'}
+            strokeWidth="1.8"
           />
           <text
             x="110"
-            y="122"
+            y="118"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="12"
+            fontSize="13"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
@@ -191,10 +191,10 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
           </text>
           <text
             x="110"
-            y="144"
+            y="142"
             textAnchor="middle"
             fill="#2868E8"
-            fontSize="13"
+            fontSize="14"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -205,32 +205,32 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
         {/* --- BLOCK 2: INSTRUCTION DECODER --- */}
         <g id="instruction-decoder">
           <rect
-            x="256"
-            y="94"
-            width="114"
-            height="72"
-            rx="14"
+            x="268"
+            y="88"
+            width="122"
+            height="76"
+            rx="16"
             fill={activeBeat >= 1 ? '#FFFFFF' : '#F8FAFF'}
             stroke={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
-            strokeWidth={activeBeat >= 1 ? '2' : '1.5'}
+            strokeWidth={activeBeat >= 1 ? '2.2' : '1.5'}
           />
           <text
-            x="313"
-            y="124"
+            x="329"
+            y="118"
             textAnchor="middle"
             fill="#102A50"
-            fontSize="12"
+            fontSize="13"
             fontWeight="600"
             fontFamily="Space Grotesk, sans-serif"
           >
             Decoder
           </text>
           <text
-            x="313"
-            y="144"
+            x="329"
+            y="141"
             textAnchor="middle"
             fill={activeBeat >= 1 ? '#2868E8' : 'rgba(16, 42, 80, 0.4)'}
-            fontSize="10"
+            fontSize="11"
             fontWeight="600"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -241,21 +241,21 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
         {/* --- BLOCK 3: CONTROL UNIT (CORE ENGINE) --- */}
         <g id="control-unit-core">
           <rect
-            x="446"
-            y="82"
-            width="144"
-            height="96"
-            rx="16"
+            x="475"
+            y="72"
+            width="150"
+            height="106"
+            rx="18"
             fill="url(#controllerNavy)"
             stroke={activeBeat >= 1 ? '#2868E8' : '#102A50'}
-            strokeWidth="2.5"
+            strokeWidth="3"
           />
           <text
-            x="518"
-            y="122"
+            x="550"
+            y="116"
             textAnchor="middle"
             fill="#FFFFFF"
-            fontSize="16"
+            fontSize="18"
             fontWeight="700"
             fontFamily="Space Grotesk, sans-serif"
             letterSpacing="0.5"
@@ -263,11 +263,11 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
             Control Unit
           </text>
           <text
-            x="518"
-            y="144"
+            x="550"
+            y="140"
             textAnchor="middle"
             fill="#94BDFF"
-            fontSize="10"
+            fontSize="11"
             fontWeight="600"
             fontFamily="Inter, sans-serif"
           >
@@ -275,9 +275,9 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
           </text>
           {/* Status Indicator LED */}
           <circle
-            cx="572"
-            cy="98"
-            r="4"
+            cx="606"
+            cy="90"
+            r="4.5"
             fill={activeBeat >= 1 ? '#2868E8' : 'rgba(255, 255, 255, 0.3)'}
           />
         </g>
@@ -286,21 +286,21 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
         <g id="signals-outputs">
           {/* Signal 1: RegRead */}
           <rect
-            x="736"
-            y="60"
-            width="120"
-            height="40"
-            rx="10"
+            x="762"
+            y="52"
+            width="135"
+            height="44"
+            rx="12"
             fill={activeBeat >= 2 ? '#FFFFFF' : '#F8FAFF'}
             stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
-            strokeWidth={activeBeat >= 2 ? '2' : '1'}
+            strokeWidth={activeBeat >= 2 ? '2.2' : '1.2'}
           />
           <text
-            x="796"
-            y="85"
+            x="829"
+            y="79"
             textAnchor="middle"
             fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-            fontSize="11"
+            fontSize="12"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -309,21 +309,21 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
 
           {/* Signal 2: ALUOp */}
           <rect
-            x="736"
-            y="110"
-            width="120"
-            height="40"
-            rx="10"
+            x="762"
+            y="104"
+            width="135"
+            height="44"
+            rx="12"
             fill={activeBeat >= 2 ? '#FFFFFF' : '#F8FAFF'}
             stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
-            strokeWidth={activeBeat >= 2 ? '2' : '1'}
+            strokeWidth={activeBeat >= 2 ? '2.2' : '1.2'}
           />
           <text
-            x="796"
-            y="135"
+            x="829"
+            y="131"
             textAnchor="middle"
             fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-            fontSize="11"
+            fontSize="12"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -332,21 +332,21 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
 
           {/* Signal 3: RegWrite */}
           <rect
-            x="736"
-            y="160"
-            width="120"
-            height="40"
-            rx="10"
+            x="762"
+            y="156"
+            width="135"
+            height="44"
+            rx="12"
             fill={activeBeat >= 2 ? '#FFFFFF' : '#F8FAFF'}
             stroke={activeBeat >= 2 ? '#2868E8' : 'rgba(16, 42, 80, 0.2)'}
-            strokeWidth={activeBeat >= 2 ? '2' : '1'}
+            strokeWidth={activeBeat >= 2 ? '2.2' : '1.2'}
           />
           <text
-            x="796"
-            y="185"
+            x="829"
+            y="183"
             textAnchor="middle"
             fill={activeBeat >= 2 ? '#2868E8' : '#102A50'}
-            fontSize="11"
+            fontSize="12"
             fontWeight="700"
             fontFamily="JetBrains Mono, monospace"
           >
@@ -356,7 +356,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
       </svg>
 
       {/* Discrete State Pill */}
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-3">
         <div className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 text-[#102A50] text-xs font-mono font-semibold shadow-sm flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#2868E8] animate-pulse" />
           <span>

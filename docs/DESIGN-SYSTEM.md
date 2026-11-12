@@ -76,39 +76,42 @@ Fonts loaded via Google Fonts:
 
 #### Slide 02: Architecture Overview
 - **Header:** "Two Components. One Processor." | "A CPU combines data processing and control."
-- **Centerpiece:** Master CPU die divided into two clear cooperative domains:
-  - **Left Domain:** Data Path (Registers, ALU, Data Bus)
-  - **Right Domain:** Controller (Instruction Decoder, Timing Logic, Control Bus)
-  - Interactive split illumination showcasing separation of concerns.
+- **Content Distribution:**
+  - **Left Domain Card (Data Path):** Concise supporting bullets (*"Processes and moves data."*, *"Includes ALU and registers."*) with component badges.
+  - **Centerpiece:** Enlarged master CPU die divided into two clear cooperative domains (Data Path & Controller) with interactive split illumination.
+  - **Right Domain Card (Controller):** Concise supporting bullets (*"Decodes instructions."*, *"Generates control signals."*, *"Coordinates processor operations."*) with component badges.
 
 #### Slide 03: Data Path
 - **Header:** "Where Data Comes to Life." | "The datapath moves and processes data."
-- **Diagram Flow:** Linear processing pipeline:
-  - `Input Data` → `Registers (R2, R3)` → `ALU` → `Destination Register (R1)` → `Output Data`
-  - Illustrative packet flow: `5 + 3 = 8`.
-  - Micro value badges displaying numerical transformation live.
+- **Content Balance (32% Text / 68% Diagram):**
+  - **Left Educational Card:** Core mechanisms (*"Registers store temporary data."*, *"ALU performs arithmetic and logic."*, *"Buses transfer data between components."*, *"Results move to destination registers."*).
+  - **Right Diagram Flow (Enlarged by ~25%):** Linear processing pipeline:
+    `Input Data` → `Registers (R2, R3)` → `ALU` → `Destination Register (R1)` → `Output Data`
+    Illustrative packet flow: `5 + 3 = 8` with real-time value latches.
 
 #### Slide 04: Controller
 - **Header:** "The Brain Behind Every Operation." | "The controller coordinates processor operations."
-- **Diagram Flow:**
-  - `Instruction [0x01: ADD]` → `Instruction Decoder` → `Control Unit`
-  - Radiating control lines: `RegRead`, `ALUOp[ADD]`, `RegWrite`, `MemRead`.
-  - Staggered control pulse propagation to peripheral blocks.
+- **Content Balance (32% Text / 68% Diagram):**
+  - **Left Educational Card:** Control mechanics (*"Fetches and decodes instructions."*, *"Generates control signals."*, *"Coordinates datapath operations."*, *"Controls execution sequence."*).
+  - **Right Diagram Flow (Enlarged by ~25%):**
+    `Instruction [0x01: ADD]` → `Instruction Decoder` → `Control Unit`
+    Radiating control lines: `RegRead`, `ALUOp[ADD]`, `RegWrite` with feedback timing loop.
 
 #### Slide 05: Key Differences
 - **Header:** "Different Roles. Shared Purpose."
 - **Composition:**
-  - Left: Comparison table with Deep Navy header bar and Electric Blue highlights.
-  - Right: Elegant digital balance scale balancing "Computation" and "Coordination".
+  - Left: Enlarged comparison table with Deep Navy header bar and Electric Blue highlights.
+  - Right: Digital balance scale card integrated with concise takeaway:
+    **"Data Path performs. Controller coordinates."**
 
 #### Slide 06: Working Together (Master Demonstration)
 - **Header:** "One Instruction. A Coordinated Process." | "Watch the processor execute an instruction."
-- **Architecture Diagram:**
+- **Architecture Diagram (Enlarged by ~30%):**
   - Top Left: `Instruction Register` (`ADD R1, R2, R3`)
   - Top Right: `Control Unit`
   - Bottom Left: `Register File` (`R2=5`, `R3=3`, `R1=0 → 8`)
   - Bottom Right: `ALU`
-- **Execution Beats:**
+- **Execution Beats & Supporting Sequence:**
   1. `FETCH`: Instruction loaded into Instruction Register.
   2. `DECODE`: Control unit decodes opcode and enables registers R2, R3.
   3. `EXECUTE`: Values (5, 3) travel to ALU, ALU computes `5 + 3 = 8`.
