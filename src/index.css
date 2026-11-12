@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-navy: #102A50;
+  --color-navy-80: rgba(16, 42, 80, 0.8);
+  --color-navy-60: rgba(16, 42, 80, 0.6);
+  --color-navy-20: rgba(16, 42, 80, 0.2);
+  --color-navy-10: rgba(16, 42, 80, 0.1);
+
+  --color-electric: #2868E8;
+  --color-electric-80: rgba(40, 104, 232, 0.8);
+  --color-electric-25: rgba(40, 104, 232, 0.25);
+  --color-electric-15: rgba(40, 104, 232, 0.15);
+  --color-electric-8: rgba(40, 104, 232, 0.08);
+
+  --color-soft-white: #F8FAFF;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #F8FAFF;
+    color: #102A50;
+    font-family: "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, .font-heading {
+    font-family: "Space Grotesk", sans-serif;
+  }
+}
+
+/* Custom scrollbars / utility classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(40, 104, 232, 0.12);
+  box-shadow: 0 10px 30px -5px rgba(16, 42, 80, 0.05);
+}
+
+.card-white {
+  background: #FFFFFF;
+  border: 1px solid rgba(40, 104, 232, 0.12);
+  box-shadow: 0 12px 36px -8px rgba(16, 42, 80, 0.06);
+}
+
+.subtle-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(40, 104, 232, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(40, 104, 232, 0.04) 1px, transparent 1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
