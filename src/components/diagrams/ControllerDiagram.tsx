@@ -38,7 +38,7 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
       className={`relative w-full flex flex-col items-center justify-center ${className}`}
     >
       <svg
-        viewBox="0 0 920 340"
+        viewBox="20 40 890 255"
         className="w-full h-auto drop-shadow-sm select-none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

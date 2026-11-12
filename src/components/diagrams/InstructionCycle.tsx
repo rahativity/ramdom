@@ -459,7 +459,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
       </svg>
 
       {/* Interactive 4-Stage Supporting Sequence Strip */}
-      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-2 select-none">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-1.5 select-none">
         {stages.map((stg) => {
           const isCurrent = stg.id === beat;
           const isCompleted = stg.id < beat;

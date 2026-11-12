@@ -8,7 +8,9 @@ import {
   Settings, 
   Binary, 
   Zap, 
-  PlaySquare
+  PlaySquare,
+  Layers,
+  Workflow
 } from 'lucide-react';
 
 interface Slide05ComparisonProps {
@@ -81,6 +83,12 @@ export const Slide05Comparison: React.FC<Slide05ComparisonProps> = ({ currentBea
       ctrlIcon: <Zap className="w-4 h-4 text-[#102A50]" />,
       ctrlText: 'Generates control signals',
     },
+    {
+      dpIcon: <Layers className="w-4 h-4 text-[#2868E8]" />,
+      dpText: 'Works in parallel (Buses)',
+      ctrlIcon: <Workflow className="w-4 h-4 text-[#102A50]" />,
+      ctrlText: 'Works in sequence (Timing)',
+    },
   ];
 
   return (
@@ -99,11 +107,11 @@ export const Slide05Comparison: React.FC<Slide05ComparisonProps> = ({ currentBea
       </div>
 
       {/* Main Composition: Side-by-Side Comparison Table + Digital Balance Scale */}
-      <div className="flex-1 grid grid-cols-12 gap-6 items-center my-auto w-full max-w-5xl mx-auto">
+      <div className="flex-1 grid grid-cols-12 gap-5 items-center my-auto w-full max-w-6xl mx-auto">
         {/* Left Side: Enlarged Comparison Table */}
-        <div className="diff-table col-span-12 lg:col-span-8 bg-white rounded-2xl border border-[#2868E8]/20 shadow-sm overflow-hidden">
+        <div className="diff-table col-span-12 lg:col-span-7 bg-white rounded-2xl border border-[#2868E8]/20 shadow-sm overflow-hidden">
           {/* Header Row */}
-          <div className="grid grid-cols-2 bg-[#102A50] text-white py-3.5 px-6 font-heading font-bold text-sm sm:text-base">
+          <div className="grid grid-cols-2 bg-[#102A50] text-white py-4 px-6 font-heading font-bold text-base">
             <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#2868E8]" />
               <span>Data Path</span>
@@ -119,24 +127,24 @@ export const Slide05Comparison: React.FC<Slide05ComparisonProps> = ({ currentBea
             {comparisonRows.map((row, idx) => (
               <div
                 key={idx}
-                className="diff-row grid grid-cols-2 px-6 py-3.5 items-center hover:bg-[#F8FAFF] transition-colors"
+                className="diff-row grid grid-cols-2 px-6 py-4 items-center hover:bg-[#F8FAFF] transition-colors"
               >
                 {/* Data Path column */}
                 <div className="flex items-center gap-3 pr-3">
-                  <div className="p-2 rounded-xl bg-[#2868E8]/10 shrink-0">
+                  <div className="p-2.5 rounded-xl bg-[#2868E8]/10 shrink-0">
                     {row.dpIcon}
                   </div>
-                  <span className="text-xs sm:text-sm font-semibold text-[#102A50]">
+                  <span className="text-sm font-semibold text-[#102A50]">
                     {row.dpText}
                   </span>
                 </div>
 
                 {/* Controller column */}
                 <div className="flex items-center gap-3 pl-3 border-l border-[#2868E8]/10">
-                  <div className="p-2 rounded-xl bg-[#102A50]/10 shrink-0">
+                  <div className="p-2.5 rounded-xl bg-[#102A50]/10 shrink-0">
                     {row.ctrlIcon}
                   </div>
-                  <span className="text-xs sm:text-sm font-semibold text-[#102A50]">
+                  <span className="text-sm font-semibold text-[#102A50]">
                     {row.ctrlText}
                   </span>
                 </div>
@@ -146,10 +154,19 @@ export const Slide05Comparison: React.FC<Slide05ComparisonProps> = ({ currentBea
         </div>
 
         {/* Right Side: Digital Balance Scale Card with Key Takeaway */}
-        <div className="diff-scale col-span-12 lg:col-span-4 flex flex-col items-center justify-center p-5 bg-white rounded-2xl border border-[#2868E8]/18 shadow-sm">
+        <div className="diff-scale col-span-12 lg:col-span-5 flex flex-col items-center justify-between p-6 bg-white rounded-2xl border border-[#2868E8]/18 shadow-sm h-full min-h-[380px]">
+          <div className="w-full text-center pb-3 border-b border-[#102A50]/10">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#2868E8] font-bold block mb-0.5">
+              System Harmony
+            </span>
+            <h4 className="font-heading font-bold text-base text-[#102A50]">
+              Equilibrium in Architecture
+            </h4>
+          </div>
+
           <svg
             viewBox="0 0 240 170"
-            className="w-full max-w-[200px] h-auto drop-shadow-sm select-none"
+            className="w-full max-w-[240px] h-auto drop-shadow-sm select-none my-2"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -184,13 +201,13 @@ export const Slide05Comparison: React.FC<Slide05ComparisonProps> = ({ currentBea
           </svg>
 
           {/* Core Takeaway - Seamlessly integrated */}
-          <div className="diff-takeaway mt-2 pt-3 border-t border-[#2868E8]/15 text-center w-full">
+          <div className="diff-takeaway w-full bg-[#F8FAFF] rounded-xl p-3.5 border border-[#2868E8]/15 text-center">
             <span className="text-[11px] font-mono uppercase tracking-wider text-[#2868E8] font-bold block mb-0.5">
-              Key Takeaway
+              Key Architectural Takeaway
             </span>
-            <p className="font-heading font-semibold text-xs sm:text-sm text-[#102A50]">
-              <strong className="text-[#2868E8]">Data Path</strong> performs.<br />
-              <strong className="text-[#102A50]">Controller</strong> coordinates.
+            <p className="font-heading font-bold text-sm sm:text-base text-[#102A50]">
+              <span className="text-[#2868E8]">Data Path</span> performs.&nbsp;
+              <span className="text-[#102A50]">Controller</span> coordinates.
             </p>
           </div>
         </div>

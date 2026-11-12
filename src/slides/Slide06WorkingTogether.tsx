@@ -29,7 +29,7 @@ export const Slide06WorkingTogether: React.FC<Slide06WorkingTogetherProps> = ({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col justify-between px-6 sm:px-12 py-4"
+      className="w-full h-full flex flex-col justify-between px-6 sm:px-12 py-3"
     >
       {/* Slide Headline & Integrated Formula Badge */}
       <div className="work-head flex flex-col sm:flex-row sm:items-end justify-between gap-2 max-w-6xl w-full mx-auto">

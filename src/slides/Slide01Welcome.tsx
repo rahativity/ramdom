@@ -90,11 +90,18 @@ export const Slide01Welcome: React.FC<Slide01WelcomeProps> = ({ onExplore }) => 
             <span>Let's Explore</span>
           </button>
         </div>
+
+        {/* Topic Highlights */}
+        <div className="mt-8 pt-4 border-t border-[#102A50]/10 flex flex-wrap gap-2 text-xs font-mono text-[#102A50]/70">
+          <span className="px-3 py-1 rounded-full bg-white border border-[#2868E8]/15 shadow-xs">01 • Execution vs Control</span>
+          <span className="px-3 py-1 rounded-full bg-white border border-[#2868E8]/15 shadow-xs">02 • ALU & Registers</span>
+          <span className="px-3 py-1 rounded-full bg-white border border-[#2868E8]/15 shadow-xs">03 • Instruction Cycle</span>
+        </div>
       </div>
 
       {/* Right Column: Isometric CPU Illustration */}
       <div className="welcome-chip flex-1 flex items-center justify-center lg:justify-end mt-6 lg:mt-0">
-        <CPUArchitecture mode="hero" className="w-full max-w-[440px]" />
+        <CPUArchitecture mode="hero" className="w-full max-w-[560px] scale-105" />
       </div>
     </div>
   );

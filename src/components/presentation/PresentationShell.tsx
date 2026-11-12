@@ -43,7 +43,7 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
       />
 
       {/* Top Header Bar */}
-      <header className="relative z-20 flex items-center justify-between px-6 sm:px-10 pt-6 pb-2 shrink-0">
+      <header className="relative z-20 flex items-center justify-between px-6 sm:px-10 pt-4 pb-1 shrink-0">
         <ProgressIndicator
           currentSlide={currentSlide}
           totalSlides={totalSlides}
@@ -72,7 +72,7 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
       </header>
 
       {/* Center 16:9 Presentation Stage Viewport */}
-      <main className="relative z-10 flex-1 w-full h-full flex items-center justify-center p-3 sm:p-6 lg:p-8 overflow-hidden">
+      <main className="relative z-10 flex-1 w-full h-full flex items-center justify-center p-2 sm:p-3 lg:p-4 overflow-hidden">
         <div className="relative w-full h-full max-w-[1440px] max-h-[810px] aspect-[16/9] flex items-center justify-center">
           {children}
         </div>

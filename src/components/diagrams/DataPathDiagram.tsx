@@ -64,7 +64,7 @@ export const DataPathDiagram: React.FC<DataPathDiagramProps> = ({
     >
       {/* SVG Circuit Canvas for Datapath - Scaled up for optimal legibility */}
       <svg
-        viewBox="0 0 920 340"
+        viewBox="10 65 910 260"
         className="w-full h-auto drop-shadow-sm select-none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
