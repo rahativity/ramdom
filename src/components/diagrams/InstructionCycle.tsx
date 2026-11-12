@@ -54,25 +54,25 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px] mx-auto flex flex-col items-center justify-center ${className}`}
+      className={`relative w-full h-full min-h-0 flex flex-col justify-between ${className}`}
     >
       {/* Visual Domain Headers (Controller vs Datapath boundary) */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mb-2">
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#2868E8]/8 border border-[#2868E8]/20">
+      <div className="w-full shrink-0 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mb-2 sm:mb-2.5">
+        <div className="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-[#2868E8]/8 border border-[#2868E8]/20">
           <div className="w-2.5 h-2.5 rounded-full bg-[#2868E8] shrink-0" />
-          <span className="text-xs xl:text-[13px] font-bold tracking-wide uppercase font-heading text-[#102A50]">
+          <span className="text-[clamp(0.75rem,0.55vw+0.48rem,1.05rem)] font-bold tracking-wide uppercase font-heading text-[#102A50]">
             Controller Domain
           </span>
-          <span className="text-[11px] xl:text-xs text-[#102A50]/75 hidden sm:inline">
+          <span className="text-[clamp(0.7rem,0.45vw+0.45rem,0.95rem)] text-[#102A50]/75 hidden sm:inline">
             (Decides & Coordinates)
           </span>
         </div>
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#102A50]/5 border border-[#102A50]/15">
+        <div className="flex items-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-[#102A50]/5 border border-[#102A50]/15">
           <div className="w-2.5 h-2.5 rounded-full bg-[#102A50] shrink-0" />
-          <span className="text-xs xl:text-[13px] font-bold tracking-wide uppercase font-heading text-[#102A50]">
+          <span className="text-[clamp(0.75rem,0.55vw+0.48rem,1.05rem)] font-bold tracking-wide uppercase font-heading text-[#102A50]">
             Data Path Domain
           </span>
-          <span className="text-[11px] xl:text-xs text-[#102A50]/75 hidden sm:inline">
+          <span className="text-[clamp(0.7rem,0.45vw+0.45rem,0.95rem)] text-[#102A50]/75 hidden sm:inline">
             (Moves & Processes Data)
           </span>
         </div>
@@ -81,7 +81,8 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
       {/* Main SVG Architectural Schematic */}
       <svg
         viewBox="0 25 980 350"
-        className="w-full h-auto max-h-[min(365px,54dvh)] xl:max-h-[min(455px,56dvh)] 2xl:max-h-[min(560px,58dvh)] drop-shadow-sm select-none bg-white rounded-2xl border border-[#2868E8]/15 p-2"
+        preserveAspectRatio="xMidYMid meet"
+        className="block w-full h-auto lg:flex-1 lg:min-h-0 lg:h-full drop-shadow-sm select-none bg-white rounded-2xl border border-[#2868E8]/15 p-2 sm:p-3"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -482,7 +483,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
       </svg>
 
       {/* Interactive 4-Stage Supporting Sequence Strip */}
-      <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 mt-2 select-none">
+      <div className="w-full shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-2 sm:mt-2.5 select-none">
         {stages.map((stg) => {
           const isCurrent = stg.id === beat;
           const isCompleted = stg.id < beat;
@@ -491,7 +492,7 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
               key={stg.id}
               type="button"
               onClick={() => onSelectBeat?.(stg.id)}
-              className={`p-2.5 sm:p-3 xl:p-3.5 rounded-xl border text-left ${
+              className={`min-h-[44px] p-2.5 sm:p-3 lg:p-3.5 xl:p-4 rounded-xl border text-left flex flex-col justify-center ${
                 reducedMotion ? '' : 'transition-all duration-200'
               } cursor-pointer ${
                 isCurrent
@@ -501,17 +502,17 @@ export const InstructionCycle: React.FC<InstructionCycleProps> = ({
                   : 'bg-white/60 border-[#102A50]/15 hover:bg-white/80'
               }`}
             >
-              <div className="flex items-center justify-between mb-0.5">
-                <span className={`text-xs sm:text-[13px] xl:text-sm font-bold font-mono ${isCurrent ? 'text-[#1B54C7]' : 'text-[#102A50]'}`}>
+              <div className="flex items-center justify-between gap-2 mb-0.5">
+                <span className={`text-[clamp(0.75rem,0.55vw+0.48rem,1.05rem)] font-bold font-mono ${isCurrent ? 'text-[#1B54C7]' : 'text-[#102A50]'}`}>
                   {stg.label}
                 </span>
                 {isCompleted ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#1B54C7]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1B54C7] shrink-0" />
                 ) : isCurrent ? (
-                  <span className={`w-2 h-2 rounded-full bg-[#2868E8] ${reducedMotion ? '' : 'animate-ping'}`} />
+                  <span className={`w-2 h-2 rounded-full bg-[#2868E8] shrink-0 ${reducedMotion ? '' : 'animate-ping'}`} />
                 ) : null}
               </div>
-              <p className="text-[11px] sm:text-xs xl:text-[13px] text-[#102A50]/80 font-sans leading-tight">
+              <p className="text-[clamp(0.72rem,0.5vw+0.45rem,0.98rem)] text-[#102A50]/80 font-sans leading-snug">
                 {stg.desc}
               </p>
             </button>

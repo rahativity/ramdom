@@ -68,31 +68,31 @@ export const Slide01Welcome: React.FC<Slide01WelcomeProps> = ({ onExplore }) => 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex items-center justify-center px-4 sm:px-8 lg:px-8 xl:px-10 py-2 lg:py-3 overflow-y-auto lg:overflow-hidden"
+      className="w-full h-full flex items-start lg:items-center justify-center px-2 sm:px-4 lg:px-4 xl:px-6 py-1 lg:py-2 overflow-y-auto lg:overflow-hidden"
     >
-      <div className="w-full max-w-[1260px] xl:max-w-[1360px] 2xl:max-w-[1500px] mx-auto my-auto grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 lg:gap-10 2xl:gap-12 items-center">
+      <div className="w-full min-h-full lg:h-full my-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-14 items-center">
         {/* Left Column: Editorial Typography */}
         <div className="lg:col-span-6 z-10 flex flex-col justify-center">
           {/* Presentation Attribution Tag */}
-          <div className="welcome-badge mb-3 sm:mb-4">
-            <span className="inline-block text-xs xl:text-[13px] uppercase tracking-wider font-mono font-semibold text-[#1B54C7] bg-[#2868E8]/10 px-3.5 py-1 rounded-full border border-[#2868E8]/25">
+          <div className="welcome-badge mb-3 sm:mb-4 xl:mb-5">
+            <span className="inline-block text-[clamp(0.7rem,0.45vw+0.48rem,0.92rem)] uppercase tracking-wider font-mono font-semibold text-[#1B54C7] bg-[#2868E8]/10 px-3.5 xl:px-4 py-1 xl:py-1.5 rounded-full border border-[#2868E8]/25">
               Computer Architecture
             </span>
           </div>
 
           {/* Large Editorial Headline */}
-          <h1 className="font-heading font-bold text-4xl sm:text-5xl lg:text-[56px] xl:text-[62px] 2xl:text-[72px] text-[#102A50] leading-[1.08] tracking-tight mb-3.5 sm:mb-5">
+          <h1 className="font-heading font-bold text-[clamp(2.35rem,3.6vw+0.8rem,5.5rem)] text-[#102A50] leading-[1.08] tracking-tight mb-3.5 sm:mb-5 xl:mb-6">
             <span className="welcome-title-line block">Data Path vs.</span>
             <span className="welcome-title-line block">Controller</span>
             <span className="welcome-title-line block text-[#2868E8]">Architecture</span>
           </h1>
 
           {/* Supporting Subtitle */}
-          <div className="welcome-sub mb-5 sm:mb-7">
-            <p className="text-base sm:text-xl xl:text-[22px] 2xl:text-2xl text-[#102A50]/75 font-normal">
+          <div className="welcome-sub mb-5 sm:mb-7 xl:mb-8">
+            <p className="text-[clamp(1rem,1.15vw+0.55rem,1.75rem)] text-[#102A50]/75 font-normal">
               Understanding the Core of a Processor
             </p>
-            <div className="w-16 xl:w-20 h-[2px] bg-[#2868E8] mt-2.5 sm:mt-3 rounded-full" />
+            <div className="w-16 xl:w-24 h-[2px] bg-[#2868E8] mt-2.5 sm:mt-3.5 rounded-full" />
           </div>
 
           {/* Call to Action "Let's Explore" */}
@@ -100,40 +100,40 @@ export const Slide01Welcome: React.FC<Slide01WelcomeProps> = ({ onExplore }) => 
             <button
               type="button"
               onClick={onExplore}
-              className={`group inline-flex items-center gap-3 px-6 sm:px-7 py-3.5 xl:py-4 rounded-full bg-white hover:bg-[#F8FAFF] text-[#102A50] font-heading font-semibold text-sm sm:text-base xl:text-lg border border-[#2868E8]/25 shadow-sm hover:shadow-md hover:border-[#2868E8]/50 ${
+              className={`group inline-flex items-center gap-3.5 px-7 xl:px-9 py-3.5 xl:py-4 rounded-full bg-white hover:bg-[#F8FAFF] text-[#102A50] font-heading font-semibold text-[clamp(0.95rem,0.7vw+0.6rem,1.3rem)] border border-[#2868E8]/25 shadow-sm hover:shadow-md hover:border-[#2868E8]/50 ${
                 reducedMotion ? '' : 'transition-all duration-200'
               } cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2868E8] focus-visible:ring-offset-2`}
             >
               <div
-                className={`w-8 h-8 rounded-full bg-[#2868E8] flex items-center justify-center text-white ${
+                className={`w-8 h-8 xl:w-9 xl:h-9 rounded-full bg-[#2868E8] flex items-center justify-center text-white ${
                   reducedMotion ? '' : 'transition-transform group-hover:translate-x-1'
                 }`}
               >
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 xl:w-[18px] xl:h-[18px]" />
               </div>
               <span>Let's Explore</span>
             </button>
           </div>
 
           {/* Topic Highlights */}
-          <div className="welcome-highlights mt-5 sm:mt-7 pt-3.5 sm:pt-4 border-t border-[#102A50]/12 flex flex-wrap gap-2 text-xs sm:text-[13px] xl:text-sm font-mono text-[#102A50]/75">
-            <span className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 shadow-xs">
+          <div className="welcome-highlights mt-5 sm:mt-7 xl:mt-8 pt-3.5 sm:pt-4 xl:pt-5 border-t border-[#102A50]/12 flex flex-wrap gap-2 xl:gap-3 text-[clamp(0.75rem,0.5vw+0.48rem,0.98rem)] font-mono text-[#102A50]/75">
+            <span className="px-3.5 xl:px-4 py-1.5 xl:py-2 rounded-full bg-white border border-[#2868E8]/20 shadow-xs">
               01 • Execution vs Control
             </span>
-            <span className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 shadow-xs">
+            <span className="px-3.5 xl:px-4 py-1.5 xl:py-2 rounded-full bg-white border border-[#2868E8]/20 shadow-xs">
               02 • ALU & Registers
             </span>
-            <span className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 shadow-xs">
+            <span className="px-3.5 xl:px-4 py-1.5 xl:py-2 rounded-full bg-white border border-[#2868E8]/20 shadow-xs">
               03 • Instruction Cycle
             </span>
           </div>
         </div>
 
         {/* Right Column: Isometric CPU Illustration */}
-        <div className="welcome-chip lg:col-span-6 flex items-center justify-center lg:justify-end">
+        <div className="welcome-chip lg:col-span-6 lg:h-full min-h-0 flex items-center justify-center">
           <CPUArchitecture
             mode="hero"
-            className="w-full max-w-[240px] sm:max-w-[350px] lg:max-w-[490px] xl:max-w-[560px] 2xl:max-w-[650px]"
+            className="w-full lg:h-full max-w-[300px] sm:max-w-[440px] lg:max-w-none lg:max-h-[min(76dvh,780px)]"
           />
         </div>
       </div>

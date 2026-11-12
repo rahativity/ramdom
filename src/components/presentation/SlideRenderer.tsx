@@ -106,7 +106,7 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({ presentation }) =>
     <div
       ref={containerRef}
       key={currentSlide}
-      className="w-full min-h-full lg:h-full relative flex items-center justify-center overflow-x-hidden lg:overflow-hidden"
+      className="w-full min-h-full lg:h-full relative flex items-stretch justify-center overflow-x-hidden lg:overflow-hidden"
     >
       {renderActiveSlide()}
     </div>

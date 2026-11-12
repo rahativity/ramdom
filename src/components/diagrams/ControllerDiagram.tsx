@@ -45,11 +45,12 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full flex flex-col items-center justify-center ${className}`}
+      className={`relative w-full h-full min-h-0 flex flex-col items-center justify-between ${className}`}
     >
       <svg
         viewBox="20 40 890 245"
-        className="w-full h-auto drop-shadow-sm select-none"
+        preserveAspectRatio="xMidYMid meet"
+        className="block w-full h-auto lg:flex-1 lg:min-h-0 lg:h-full drop-shadow-sm select-none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -382,9 +383,9 @@ export const ControllerDiagram: React.FC<ControllerDiagramProps> = ({
       </svg>
 
       {/* Discrete State Pill */}
-      <div className="mt-2.5 flex items-center gap-3">
-        <div className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 text-[#102A50] text-xs font-mono font-semibold shadow-sm flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full bg-[#2868E8] ${reducedMotion ? '' : 'animate-pulse'}`} />
+      <div className="mt-2 sm:mt-2.5 shrink-0 flex items-center gap-3">
+        <div className="px-3.5 py-1.5 rounded-full bg-white border border-[#2868E8]/20 text-[#102A50] text-xs xl:text-sm font-mono font-semibold shadow-sm flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full bg-[#2868E8] shrink-0 ${reducedMotion ? '' : 'animate-pulse'}`} />
           <span>
             {activeBeat === 0 && 'Stage 1: Instruction Arrives at Controller'}
             {activeBeat === 1 && 'Stage 2: Opcode Decoded & Micro-Operations Sequenced'}

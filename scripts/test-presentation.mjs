@@ -191,91 +191,222 @@ async function collectViewportMetrics(page, checkDesktop, currentIdx) {
     const mainHorizOverflow = main ? main.scrollWidth > main.clientWidth : false;
     const headerOverflow = header ? header.scrollWidth > header.clientWidth : false;
 
-    const slideRoot = main?.firstElementChild?.firstElementChild?.firstElementChild;
-    const stageShell = main?.querySelector('.max-w-\\[1680px\\]');
-    const stageBoxes = Array.from(main ? main.querySelectorAll('.max-w-\\[1260px\\]') : []);
-    const stale1160Count = document.querySelectorAll('.max-w-\\[1160px\\]').length;
+    const stageShell = main?.querySelector('[data-stage-shell="fullscreen"]');
+    const slideRoot = stageShell?.firstElementChild?.firstElementChild ?? null;
+    const staleMaxWidthRegex = /(^|:)max-w-\[(1160|1260|1360|1500|1680)px\]$/;
+    const staleMaxWidthMatches = Array.from(document.querySelectorAll('*')).flatMap((el) =>
+      Array.from(el.classList).filter((cls) => staleMaxWidthRegex.test(cls))
+    );
     const mainVertOverflow = main ? main.scrollHeight > main.clientHeight + 2 : false;
     const slideVertOverflow = slideRoot ? slideRoot.scrollHeight > slideRoot.clientHeight + 2 : false;
     const shellVertOverflow = stageShell ? stageShell.scrollHeight > stageShell.clientHeight + 2 : false;
 
     const headerRect = header ? header.getBoundingClientRect() : null;
-    const visibleStageRects = stageBoxes
+    const shellRect = stageShell ? stageShell.getBoundingClientRect() : null;
+
+    // Measure actual rendered content footprint per slide layout
+    const visibleContentEls =
+      slideIdx === 6
+        ? Array.from(slideRoot?.firstElementChild?.children || [])
+        : Array.from(slideRoot?.children || []);
+    const visibleContentRects = visibleContentEls
       .map((el) => el.getBoundingClientRect())
       .filter((r) => r.width > 0 && r.height > 0);
-    const stageUnion =
-      visibleStageRects.length > 0
+    const contentUnion =
+      visibleContentRects.length > 0
         ? {
-            left: Math.min(...visibleStageRects.map((r) => r.left)),
-            top: Math.min(...visibleStageRects.map((r) => r.top)),
-            right: Math.max(...visibleStageRects.map((r) => r.right)),
-            bottom: Math.max(...visibleStageRects.map((r) => r.bottom)),
+            left: Math.min(...visibleContentRects.map((r) => r.left)),
+            top: Math.min(...visibleContentRects.map((r) => r.top)),
+            right: Math.max(...visibleContentRects.map((r) => r.right)),
+            bottom: Math.max(...visibleContentRects.map((r) => r.bottom)),
           }
         : null;
 
-    // Slide-specific geometry checks (alignment, stage balance & card height parity on desktop)
+    const primaryStageEl =
+      slideIdx === 0
+        ? slideRoot?.firstElementChild ?? null
+        : slideIdx >= 1 && slideIdx <= 5
+        ? slideRoot?.children[1] ?? null
+        : slideRoot?.firstElementChild ?? null;
+    const primaryStageRect = primaryStageEl ? primaryStageEl.getBoundingClientRect() : null;
+
+    const primarySvgEl =
+      slideIdx === 0
+        ? slideRoot?.querySelector('.welcome-chip svg')
+        : slideIdx === 1
+        ? slideRoot?.querySelector('.overview-card svg:not(.lucide)')
+        : slideIdx === 2 || slideIdx === 3 || slideIdx === 5
+        ? primaryStageEl?.querySelector('svg:not(.lucide)')
+        : slideIdx === 4
+        ? slideRoot?.querySelector('.diff-scale svg')
+        : slideIdx === 6
+        ? slideRoot?.querySelector('.ty-chip svg')
+        : null;
+    const primarySvgRect = primarySvgEl ? primarySvgEl.getBoundingClientRect() : null;
+
+    const footprint = {
+      shellWidthPct:
+        shellRect && docEl.clientWidth > 0 ? +((shellRect.width / docEl.clientWidth) * 100).toFixed(1) : 0,
+      shellHeightPct:
+        shellRect && mainRect && mainRect.height > 0 ? +((shellRect.height / mainRect.height) * 100).toFixed(1) : 0,
+      contentWidthPct:
+        contentUnion && docEl.clientWidth > 0
+          ? +(((contentUnion.right - contentUnion.left) / docEl.clientWidth) * 100).toFixed(1)
+          : 0,
+      contentHeightPct:
+        contentUnion && mainRect && mainRect.height > 0
+          ? +(((contentUnion.bottom - contentUnion.top) / mainRect.height) * 100).toFixed(1)
+          : 0,
+      stageGridWidthPct:
+        primaryStageRect && docEl.clientWidth > 0
+          ? +((primaryStageRect.width / docEl.clientWidth) * 100).toFixed(1)
+          : 0,
+      stageGridHeightPct:
+        primaryStageRect && mainRect && mainRect.height > 0
+          ? +((primaryStageRect.height / mainRect.height) * 100).toFixed(1)
+          : 0,
+      primarySvg: primarySvgRect
+        ? { w: Math.round(primarySvgRect.width), h: Math.round(primarySvgRect.height) }
+        : null,
+    };
+
+    // Full-screen stage shell, footprint ratios, alignment & card height parity checks
     const extraIssues = [];
     if (!stageShell) {
-      extraIssues.push('Missing enlarged stage shell (.max-w-[1680px]) inside <main>');
+      extraIssues.push('Missing [data-stage-shell="fullscreen"] inside <main>');
     }
-    if (stale1160Count > 0) {
-      extraIssues.push(`Found ${stale1160Count} stale .max-w-[1160px] container(s)`);
+    if (staleMaxWidthMatches.length > 0) {
+      const uniqueStale = [...new Set(staleMaxWidthMatches)];
+      extraIssues.push(
+        `Found ${staleMaxWidthMatches.length} stale max-w-* cap(s): ${uniqueStale.join(', ')}`
+      );
     }
-    if (stageBoxes.length === 0) {
-      extraIssues.push('Missing enlarged slide stage container (.max-w-[1260px]) inside <main>');
-    }
-    if (isDesktop && stageShell) {
-      const shellRect = stageShell.getBoundingClientRect();
-      if (docEl.clientWidth >= 1920 && (shellRect.width <= 1440 || shellRect.width > 1681)) {
-        extraIssues.push(`1920px stage shell width out of expected (1440, 1680] range: ${shellRect.width.toFixed(1)}px`);
+
+    if (isDesktop && shellRect && mainRect) {
+      if (footprint.shellWidthPct < 92) {
+        extraIssues.push(
+          `[data-stage-shell="fullscreen"] width ${footprint.shellWidthPct}% < 92% of viewport (${shellRect.width.toFixed(1)}px / ${docEl.clientWidth}px)`
+        );
+      }
+      if (footprint.shellHeightPct < 85) {
+        extraIssues.push(
+          `[data-stage-shell="fullscreen"] height ${footprint.shellHeightPct}% < 85% of <main> (${shellRect.height.toFixed(1)}px / ${mainRect.height.toFixed(1)}px)`
+        );
+      }
+      if (shellRect.top < mainRect.top - 1 || shellRect.bottom > mainRect.bottom + 1) {
+        extraIssues.push(
+          `Stage shell exceeds <main> vertical bounds (y=${shellRect.top.toFixed(1)}..${shellRect.bottom.toFixed(1)} vs main=${mainRect.top.toFixed(1)}..${mainRect.bottom.toFixed(1)})`
+        );
+      }
+      if (Math.abs((shellRect.left - mainRect.left) - (mainRect.right - shellRect.right)) > 2) {
+        extraIssues.push('Stage shell not horizontally centered inside <main>');
       }
     }
-    if (isDesktop && stageUnion && mainRect && headerRect) {
-      const unionW = stageUnion.right - stageUnion.left;
-      const unionH = stageUnion.bottom - stageUnion.top;
-      const widthRatio = unionW / docEl.clientWidth;
-      const heightRatio = unionH / mainRect.height;
-      const leftMargin = stageUnion.left;
-      const rightMargin = docEl.clientWidth - stageUnion.right;
-      const bottomMargin = docEl.clientHeight - stageUnion.bottom;
-      const topGapFromHeader = stageUnion.top - headerRect.bottom;
 
-      if (stageUnion.top < mainRect.top - 1 || stageUnion.bottom > mainRect.bottom + 1) {
+    if (isDesktop && contentUnion && mainRect && headerRect) {
+      const topGapFromHeader = contentUnion.top - headerRect.bottom;
+      if (contentUnion.top < mainRect.top - 1 || contentUnion.bottom > mainRect.bottom + 1) {
         extraIssues.push(
-          `Slide content extends outside <main> bounds (y=${stageUnion.top.toFixed(1)}..${stageUnion.bottom.toFixed(1)} vs main=${mainRect.top.toFixed(1)}..${mainRect.bottom.toFixed(1)})`
+          `Slide content clipped outside <main> bounds (y=${contentUnion.top.toFixed(1)}..${contentUnion.bottom.toFixed(1)} vs main=${mainRect.top.toFixed(1)}..${mainRect.bottom.toFixed(1)})`
         );
       }
       if (topGapFromHeader < 8) {
         extraIssues.push(`Slide top too close to <header>: ${topGapFromHeader.toFixed(1)}px`);
       }
-      if (leftMargin < 48 || rightMargin < 48 || bottomMargin < 16) {
-        extraIssues.push(
-          `Insufficient outer corner clearance (L=${leftMargin.toFixed(1)}, R=${rightMargin.toFixed(1)}, B=${bottomMargin.toFixed(1)})`
-        );
-      }
-      if (Math.abs((stageUnion.left - mainRect.left) - (mainRect.right - stageUnion.right)) > 2) {
-        extraIssues.push(`Slide container not horizontally centered inside <main>`);
-      }
-      if (widthRatio < 0.7 || widthRatio > 0.94) {
-        extraIssues.push(`Unbalanced horizontal stage footprint ratio: ${(widthRatio * 100).toFixed(1)}%`);
-      }
-      if (heightRatio < 0.45 || heightRatio > 0.95) {
-        extraIssues.push(`Unbalanced vertical stage footprint ratio: ${(heightRatio * 100).toFixed(1)}%`);
-      }
-      if (docEl.clientWidth >= 1440 && unionW <= 1200) {
-        extraIssues.push(`Stage width at ${docEl.clientWidth}px did not scale past 1200px (${unionW.toFixed(1)}px)`);
-      }
-      if (docEl.clientWidth >= 1920 && unionW < 1450) {
-        extraIssues.push(`Stage width at 1920px did not reach ~1500px (${unionW.toFixed(1)}px)`);
+
+      if (slideIdx === 0) {
+        if (footprint.stageGridWidthPct < 88) {
+          extraIssues.push(`Slide 01 hero grid width ${footprint.stageGridWidthPct}% < 88%`);
+        }
+        if (footprint.stageGridHeightPct < 70) {
+          extraIssues.push(`Slide 01 hero grid vertical presence ${footprint.stageGridHeightPct}% < 70%`);
+        }
+        if (primarySvgRect && (primarySvgRect.width / docEl.clientWidth < 0.38 || primarySvgRect.height / mainRect.height < 0.65)) {
+          extraIssues.push(
+            `Slide 01 CPU hero SVG undersized (${Math.round(primarySvgRect.width)}x${Math.round(primarySvgRect.height)})`
+          );
+        }
+      } else if (slideIdx >= 1 && slideIdx <= 5) {
+        if (footprint.stageGridWidthPct < 88) {
+          extraIssues.push(`Slide 0${slideIdx + 1} main grid width ${footprint.stageGridWidthPct}% < 88%`);
+        }
+        if (footprint.stageGridHeightPct < 72) {
+          extraIssues.push(`Slide 0${slideIdx + 1} main grid height ${footprint.stageGridHeightPct}% < 72% of <main>`);
+        }
+        if (slideIdx === 5 && primarySvgRect) {
+          const svgWPct = (primarySvgRect.width / docEl.clientWidth) * 100;
+          const svgHPct = (primarySvgRect.height / mainRect.height) * 100;
+          if (svgWPct < 88 || svgHPct < 55) {
+            extraIssues.push(
+              `Slide 06 InstructionCycle SVG undersized (${svgWPct.toFixed(1)}%w x ${svgHPct.toFixed(1)}%h)`
+            );
+          }
+        }
+      } else if (slideIdx === 6) {
+        const leftGap = contentUnion.left;
+        const rightGap = docEl.clientWidth - contentUnion.right;
+        if (Math.abs(leftGap - rightGap) > 2) {
+          extraIssues.push(`Slide 07 centered hero asymmetrical (L=${leftGap.toFixed(1)}, R=${rightGap.toFixed(1)})`);
+        }
+        if (footprint.contentHeightPct < 55) {
+          extraIssues.push(`Slide 07 vertical footprint too small (${footprint.contentHeightPct}%)`);
+        }
+        if (primarySvgRect) {
+          const minMascotW = docEl.clientWidth >= 1920 ? 390 : docEl.clientWidth >= 1440 ? 300 : 250;
+          if (primarySvgRect.width < minMascotW) {
+            extraIssues.push(`Slide 07 mascot SVG did not scale up (${Math.round(primarySvgRect.width)}px < ${minMascotW}px)`);
+          }
+        }
       }
     }
     if (isDesktop && slideIdx === 1) {
       const cards = Array.from(document.querySelectorAll('.overview-card > div'));
-      if (cards.length === 3) {
-        const heights = cards.map((c) => c.getBoundingClientRect().height);
-        const spread = Math.max(...heights) - Math.min(...heights);
-        if (spread > 2) {
-          extraIssues.push(`Slide 02 card height mismatch: ${heights.map((h) => h.toFixed(1)).join('/')}`);
+      if (cards.length !== 3) {
+        extraIssues.push(`Slide 02 expected 3 .overview-card > div cards, got ${cards.length}`);
+      } else {
+        const [r0, r1, r2] = cards.map((c) => c.getBoundingClientRect());
+        const bottomDiff = Math.abs(r1.height - r2.height);
+        if (bottomDiff > 2) {
+          extraIssues.push(
+            `Slide 02 bottom card height mismatch: ${r1.height.toFixed(1)}/${r2.height.toFixed(1)}`
+          );
+        }
+        if (r1.top < r0.bottom - 1 || r2.top < r0.bottom - 1) {
+          extraIssues.push(
+            `Slide 02 bottom cards not below top showcase (showcase bottom=${r0.bottom.toFixed(1)}, cards top=${r1.top.toFixed(1)}/${r2.top.toFixed(1)})`
+          );
+        }
+        if (r0.height <= r1.height || r0.height <= r2.height) {
+          extraIssues.push(
+            `Slide 02 top showcase height (${r0.height.toFixed(1)}) must exceed bottom cards (${r1.height.toFixed(1)}/${r2.height.toFixed(1)})`
+          );
+        }
+        if (!primarySvgRect) {
+          extraIssues.push('Slide 02 missing primary panoramic SVG');
+        } else if (
+          mainRect &&
+          (primarySvgRect.width < docEl.clientWidth * 0.50 ||
+            primarySvgRect.height < mainRect.height * 0.34)
+        ) {
+          extraIssues.push(
+            `Slide 02 panoramic SVG undersized (${primarySvgRect.width.toFixed(1)}x${primarySvgRect.height.toFixed(1)} vs min ${(docEl.clientWidth * 0.50).toFixed(1)}x${(mainRect.height * 0.34).toFixed(1)})`
+          );
+        }
+        for (const [idx, card] of [cards[1], cards[2]].entries()) {
+          const ul = card.querySelector('ul');
+          if (!ul) {
+            extraIssues.push(`Slide 02 bottom card ${idx + 1} missing <ul> list`);
+            continue;
+          }
+          const cardRect = card.getBoundingClientRect();
+          const ulRect = ul.getBoundingClientRect();
+          const cs = window.getComputedStyle(card);
+          const bottomVoid = cardRect.bottom - parseFloat(cs.paddingBottom) - ulRect.bottom;
+          if (bottomVoid > 24) {
+            extraIssues.push(
+              `Slide 02 bottom card ${idx + 1} has excessive internal vertical void (${bottomVoid.toFixed(1)}px > 24px)`
+            );
+          }
         }
       }
     }
@@ -336,6 +467,7 @@ async function collectViewportMetrics(page, checkDesktop, currentIdx) {
       headerOverflow,
       interactiveOverflow,
       extraIssues,
+      footprint,
       mainDims: mainRect ? { h: mainRect.height, scrollH: main?.scrollHeight } : null,
       slideDims: slideRoot ? { h: slideRoot.clientHeight, scrollH: slideRoot.scrollHeight } : null,
     };
@@ -433,7 +565,7 @@ function assertViewportMetrics(metrics, labelPrefix, checkDesktop) {
     assert.equal(
       metrics.shellVertOverflow,
       false,
-      `${labelPrefix}: desktop vertical clipping in stage shell (.max-w-[1680px])`
+      `${labelPrefix}: desktop vertical clipping in stage shell ([data-stage-shell="fullscreen"])`
     );
   }
 }
@@ -644,6 +776,7 @@ async function runViewportLayoutChecks(browser, url) {
       await sleep(150);
     }
 
+    const slideFootprints = [];
     for (let slideIdx = 0; slideIdx < 7; slideIdx++) {
       if (slideIdx > 0) {
         await jumpToSlideViaOverview(page, slideIdx, 950);
@@ -651,11 +784,23 @@ async function runViewportLayoutChecks(browser, url) {
 
       const metrics = await collectViewportMetrics(page, vp.isDesktop, slideIdx);
       assertViewportMetrics(metrics, `${vp.name} Slide 0${slideIdx + 1}`, vp.isDesktop);
+      if (vp.isDesktop) {
+        const fp = metrics.footprint;
+        const svgNote = fp.primarySvg ? ` svg=${fp.primarySvg.w}x${fp.primarySvg.h}` : '';
+        slideFootprints.push(
+          `S0${slideIdx + 1}: shell=${fp.shellWidthPct}%w/${fp.shellHeightPct}%h content=${fp.contentWidthPct}%w/${fp.contentHeightPct}%h grid=${fp.stageGridWidthPct}%w/${fp.stageGridHeightPct}%h${svgNote}`
+        );
+      }
     }
 
     assert.equal(vpErrors.length, 0, `${vp.name} console/page errors: ${vpErrors.join(' | ')}`);
     assert.equal(vpWarnings.length, 0, `${vp.name} console warnings: ${vpWarnings.join(' | ')}`);
     console.log(`  ✅ ${vp.name}: all 7 slides passed (minimal header, calm corner SVGs, 0 overflow, 0 warnings/errors)`);
+    if (slideFootprints.length > 0) {
+      for (const line of slideFootprints) {
+        console.log(`     📊 ${line}`);
+      }
+    }
 
     await context.close();
   }

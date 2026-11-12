@@ -43,7 +43,7 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
       <AnimatedBackground currentSlide={currentSlide} />
 
       {/* Top Header Bar */}
-      <header className="relative z-20 flex flex-wrap items-center justify-between gap-2 px-4 sm:px-8 lg:px-10 pt-3 sm:pt-4 pb-1 shrink-0">
+      <header className="relative z-20 flex flex-wrap items-center justify-between gap-2 px-4 sm:px-6 lg:px-8 xl:px-10 pt-2 sm:pt-2.5 pb-1 shrink-0">
         <ProgressIndicator
           currentSlide={currentSlide}
           totalSlides={totalSlides}
@@ -67,9 +67,12 @@ export const PresentationShell: React.FC<PresentationShellProps> = ({
         </div>
       </header>
 
-      {/* Center 16:9 Presentation Stage Viewport (graceful scroll on small screens) */}
-      <main className="relative z-10 flex-1 min-h-0 w-full flex items-start lg:items-center justify-center px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2 lg:py-3 overflow-y-auto overflow-x-hidden lg:overflow-hidden">
-        <div className="relative w-full min-h-full lg:min-h-0 lg:h-full max-w-[1680px] lg:max-h-[960px] flex items-center justify-center">
+      {/* Full-Screen Presentation Stage Viewport (graceful scroll on small screens) */}
+      <main className="relative z-10 flex-1 min-h-0 w-full flex items-start lg:items-stretch justify-center px-3 sm:px-5 lg:px-6 xl:px-8 pt-1 pb-2.5 sm:pb-3 lg:pb-4 overflow-y-auto overflow-x-hidden lg:overflow-hidden">
+        <div
+          data-stage-shell="fullscreen"
+          className="relative w-full h-full min-h-full lg:min-h-0 flex items-stretch justify-center"
+        >
           {children}
         </div>
       </main>
