@@ -5,7 +5,7 @@
 
 Every motion behavior communicates CPU state, bus transfer, or spatial context while remaining lightweight and accessible:
 
-- **Single JS Animation Engine:** **GSAP 3** (`gsap` and `gsap/MotionPathPlugin`) drives all slide transitions, staggered slide entrances, SVG packet interpolations, and side-rail circuit motion.
+- **Single JS Animation Engine:** **GSAP 3** (`gsap`) focuses exclusively on slide transitions, staggered slide entrances, and CPU hardware diagram animations (side-rail animations and `MotionPathPlugin` were removed from `AnimatedBackground.tsx`).
   - *(Note: `motion` and `@gsap/react` are listed in `package.json` but are not imported anywhere in `src/`; no dual-engine collision exists.)*
 - **Native Modal & CSS Transitions:** Native `<dialog class="overview-dialog">` uses modern CSS `@starting-style` and `transition-behavior: allow-discrete` (`200ms ease-out` opacity/translate/backdrop blur), paired with concise Tailwind hover transitions on buttons and diagram highlights.
 - **Reduced-Motion First (`useReducedMotion`):** Every animated diagram, slide, shell control, and transition checks the live `(prefers-reduced-motion: reduce)` media query via `src/hooks/useReducedMotion.ts` (`useSyncExternalStore`).
@@ -25,21 +25,21 @@ Direction-aware transitions invert spatial offsets cleanly on backward navigatio
 | **05 → 06** | `connected-zoom` | Spatial zoom (`scale: 0.94/1.04 → 1`, `y: ±20px → 0`) | `825ms` (`1.1×`) | `power3.out` |
 | **06 → 07** | `soft-fade` | Gentle cross-fade (`scale: 0.985 → 1`, `opacity: 0 → 1`) | `675ms` (`0.9×`) | `power2.out` |
 
-- **Interruption-Safe Navigation (`usePresentation.ts`):** `jumpToSlide()` cancels any active `transitionTimerRef` timeout instead of dropping rapid `Home`/`End` or dot-button clicks, while `SlideRenderer` cleans up prior GSAP timelines on unmount via `tl.kill()` and `gsap.set(..., { clearProps })`.
+- **Interruption-Safe Navigation (`usePresentation.ts`):** `jumpToSlide()` cancels any active `transitionTimerRef` timeout instead of dropping rapid `Home`/`End` or Slide Overview `<dialog>` selections, while `SlideRenderer` cleans up prior GSAP timelines on unmount via `tl.kill()` and `gsap.set(..., { clearProps })`.
 - **Reduced Motion Fallback:** `SlideRenderer` bypasses `animateSlideTransition()` and runs a gentle `150ms` opacity fade (`power1.out`) on slide switches, clearing inline styles immediately on cleanup so elements never remain stuck at `opacity: 0`.
 
 ---
 
-### 3. Background & Side-Rail Motion Graphics (`AnimatedBackground.tsx`)
+### 3. Static Minimal Keynote Corner Artwork (`AnimatedBackground.tsx`)
 
-When on desktop (`min-width: 1024px`) and `prefers-reduced-motion` is false:
+Background decoration is intentionally **100% static** so focus remains squarely on the slide transitions and hardware schematics:
 
-1. **Node Reveal (`.bg-node-left`, `.bg-node-right`):** Scale `0.72 → 1` and opacity `0 → 1` (`0.65s`, `0.08s` stagger, `back.out(1.4)`), clearing `scale` upon completion.
-2. **Trace Drawing (`.bg-trace-left`, `.bg-trace-right`):** Orthogonal `pathLength={100}` bus traces draw via `strokeDashoffset: 100 → 0` (`1.25s`, `0.08s` stagger, `power2.inOut`).
-3. **Ambient Levitation (`.bg-float`):** Micro-chip modules and geometric accents float smoothly (`y: '-=6'`, `3.2s`, `sine.inOut`, infinite yoyo). Nested `<g transform="translate(...) rotate(45)">` wrappers isolate static SVG rotation/position from GSAP transforms.
-4. **Junction Halos (`.bg-pulse`):** Pulsing radial halos (`scale: 1 → 1.45`, `opacity → 0.45`, `2.1s`, `sine.inOut`, infinite yoyo).
-5. **Bus Packet Pulses (`.bg-packet`):** Three glowing packets per side rail travel continuously along `#busA` (`6.5s` loop, offsets `0.15` & `0.65`) and `#busB` (`5.2s` loop, offset `0.4`) via `MotionPathPlugin` (`ease: 'none'`, `repeat: -1`).
-6. **Zero Missing Target Guarantee:** `animateIfPresent()` queries `rootRef` before scheduling any tween; packet groups only mount when `!prefersReducedMotion`.
+1. **Zero Background GSAP Loops:** `SideRailSvg`, `getSlideRailTheme`, `gsap`/`MotionPathPlugin` imports, and all `.bg-packet`, `.bg-float`, `.bg-pulse`, `.bg-trace-left`, `.bg-trace-right`, `.bg-node-left`, and `.bg-node-right` elements have been completely removed.
+2. **Three Calm Corner SVGs (`aria-hidden="true"`, `pointer-events-none`, `meet` scaling):**
+   - **Top-Right (`viewBox="0 0 480 340"`, `xMaxYMin meet`):** Layered soft sky-blue organic waves (`#E6EFFF`/`#D6E5FF` fading into `#2868E8`), thin orbital Bezier arc with one static 45° diamond marker (`7×7`, `rx="1.5"`), and two translucent rounded micro-square tiles (`rx="6"`).
+   - **Bottom-Left (`viewBox="0 0 520 300"`, `xMinYMax meet`):** Soft curved sky-blue layered organic sweep wave and hairline arc echo.
+   - **Bottom-Right (`viewBox="0 0 280 180"`, `xMaxYMax meet`):** Subtle outer corner whisper accent.
+3. **Subtle Per-Slide State Shift:** Each slide index (`0..6`) calmly varies the diamond marker position along the Bezier curve (`diamondT`), arc/tile opacities, micro-tile offsets, and bottom-right whisper opacity without triggering motion or layout shifts.
 
 ---
 
@@ -100,5 +100,5 @@ When `(prefers-reduced-motion: reduce)` matches:
 1. `App.tsx` disables the `2400ms` auto-play beat timer and `PresentationShell` reflects paused playback (`Play Auto Animation`).
 2. `SlideRenderer.tsx` replaces sliding/blur/zoom transitions with a `150ms` opacity crossfade.
 3. All 7 slides and 4 diagrams immediately `gsap.set(...)` animated selectors to `opacity: 1` and neutral transforms, bypassing infinite floats, packet loops, and pulse tweens.
-4. `AnimatedBackground.tsx` renders static side rails without `.bg-packet` nodes or GSAP loops.
+4. `AnimatedBackground.tsx` renders static minimal Keynote corner SVGs across all motion modes without any GSAP loops or packet elements.
 5. `index.css` disables `.overview-dialog` CSS transitions and transforms inside `@media (prefers-reduced-motion: reduce)`.

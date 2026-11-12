@@ -3,7 +3,7 @@
 
 An animated, interactive 7-slide technical presentation website explaining **Data Path vs. Controller Architecture** in modern computer processors.
 
-Built with a responsive 16:9 stage layout, editorial typography, side architectural motion graphics, and precision SVG hardware schematics combining Apple Keynote clarity with GSAP-orchestrated CPU datapath and control-signal execution flows.
+Built with a responsive 16:9 stage layout, editorial typography, calm minimal Keynote corner vector artwork, and precision SVG hardware schematics combining Apple Keynote clarity with GSAP-orchestrated CPU datapath and control-signal execution flows.
 
 ---
 
@@ -15,11 +15,12 @@ Built with a responsive 16:9 stage layout, editorial typography, side architectu
   - Dark Electric Blue (`#1B54C7`) for small labels, badges, and interactive text (`>= 5.6:1` WCAG 2.1 AA contrast)
   - Soft White (`#F8FAFF`) canvas with `#FFFFFF` cards and soft sky-blue corner waves (`#E6EFFF` / `#D6E5FF`)
 - **Typography:** Space Grotesk (Display & Headings), Inter (Body & UI), JetBrains Mono (Registers, opcodes, and bus readouts).
-- **Side Motion Graphics:** Left and right architectural circuit rails (`AnimatedBackground.tsx`) with slide-themed bus geometries, micro-chip modules, pulsing junction nodes, and GSAP `MotionPathPlugin` packet flows on desktop (`lg+`).
+- **Calm Corner Artwork:** Static minimal Apple-Keynote corner SVGs (`AnimatedBackground.tsx`) with layered soft sky-blue organic waves, a delicate top-right orbital arc with a 45° diamond marker and translucent rounded micro-tiles, and a quiet bottom-right corner whisper (`meet` scaling, zero side-rail animations).
 - **Accessible Interactive UI:**
+  - Minimal top-left `01 / 07` numeric indicator + `#2868E8` accent bar (zero top-bar dot clutter)
   - Native top-layer `<dialog>` Slide Overview (`showModal()`, `closedby="any"` + pointer boundary fallback, `overscroll-behavior: contain`)
   - Live `prefers-reduced-motion: reduce` subscription (`useReducedMotion`) pausing auto-play and infinite loops while snapping content cleanly to `opacity: 1`
-  - Accessible `>= 24×24px` slide-dot hit targets and `#1B54C7` `:focus-visible` outlines
+  - Accessible `32×32px` (`>= 24×24px`) header icon controls and `#1B54C7` `:focus-visible` outlines
 
 ---
 
@@ -50,7 +51,7 @@ Built with a responsive 16:9 stage layout, editorial typography, side architectu
 
 - **Framework:** React 19 + TypeScript (`tsc -b`)
 - **Build & Styling:** Vite 8 + Tailwind CSS v4
-- **Animation & Icons:** GSAP 3 (`gsap` + `gsap/MotionPathPlugin`), `lucide-react`, `clsx`
+- **Animation & Icons:** GSAP 3 (`gsap` focused on slide transitions, hardware diagrams & slide entrances), `lucide-react`, `clsx`
 - **Linting & Verification:** `oxlint`, TypeScript (`--noEmit`), Puppeteer headless Chrome QA suite (`scripts/test-presentation.mjs`)
 
 > **Note on Preserved Starter / Unused Assets:** `package.json` includes unused dependencies (`@gsap/react`, `motion`, `canvas-confetti`, `@types/canvas-confetti`, `tailwind-merge`), and Vite starter files (`src/App.css`, `src/assets/hero.png`, `src/assets/react.svg`, `src/assets/vite.svg`, `public/favicon.svg`, `public/icons.svg`) remain in the workspace untouched.
@@ -104,11 +105,11 @@ src/
 │   │   ├── ControllerDiagram.tsx     # Decoder, Control Unit & signal dispatch
 │   │   └── InstructionCycle.tsx      # Master coordinated ADD R1, R2, R3 schematic
 │   ├── presentation/
-│   │   ├── AnimatedBackground.tsx    # Organic corner waves + desktop left/right circuit rails
-│   │   ├── PresentationShell.tsx     # Responsive 16:9 stage shell & header chrome
+│   │   ├── AnimatedBackground.tsx    # Static minimal Keynote corner waves, orbital arcs & tiles
+│   │   ├── PresentationShell.tsx     # Responsive 16:9 stage shell & minimal header chrome
 │   │   ├── SlideRenderer.tsx         # Slide transition & reduced-motion wrapper
 │   │   ├── SlideNavigation.tsx       # Presentation playback & modal controls
-│   │   ├── ProgressIndicator.tsx     # 01 / 07 index, >=24px slide dots, and beat stages
+│   │   ├── ProgressIndicator.tsx     # Minimal 01 / 07 slide counter and #2868E8 accent bar
 │   │   └── SlideOverview.tsx         # Native top-layer <dialog> slide index modal
 │   └── ui/
 │       └── IconButton.tsx            # Accessible circular icon control

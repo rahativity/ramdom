@@ -5,7 +5,7 @@
 
 The design system translates the bright Apple-Keynote presentation aesthetic into a responsive 16:9 interactive web deck:
 
-- **Canvas:** Soft White (`#F8FAFF`) base accented by soft sky-blue organic corner waves (`#E6EFFF`, `#D6E5FF`) and left/right architectural motion-graphics rails.
+- **Canvas:** Soft White (`#F8FAFF`) base accented by calm, static minimal Keynote corner artwork (`#E6EFFF`, `#D6E5FF`, and translucent `#2868E8` hairlines/micro-tiles).
 - **Typography:** Deep Navy (`#102A50`) for headlines and academic clarity, accented by Electric Blue (`#2868E8`) on large display elements and Dark Electric Blue (`#1B54C7`) for WCAG AA small text legibility.
 - **Surfaces:** Pure White (`#FFFFFF`) elevated cards with `1px` translucent electric-blue strokes (`rgba(40, 104, 232, 0.2)` / `0.12`) and subtle ambient shadows.
 - **Hardware Schematics:** Crisp orthogonal and 2.5D isometric SVG diagrams representing silicon dies, registers, ALUs, decoders, and buses.
@@ -21,7 +21,7 @@ The design system translates the bright Apple-Keynote presentation aesthetic int
 | **Dark Electric Blue** | `#1B54C7` | Small labels, category tags, monospace badges, `:focus-visible` outline (`2px solid #1B54C7`) |
 | **Soft White** | `#F8FAFF` | Canvas base, `<dialog>` surface, inactive diagram blocks |
 | **Card White** | `#FFFFFF` | Elevated content cards, diagram containers, CTA pills |
-| **Sky Tint Variants** | `#E6EFFF`, `#D6E5FF`, `#EBF2FF`, `#DBEAFE` | Corner waves, side-rail pill gradients, active register fills, light text on dark silicon dies |
+| **Sky Tint Variants** | `#E6EFFF`, `#D6E5FF`, `#EBF2FF`, `#DBEAFE` | Corner waves, translucent corner tiles, active register fills, light text on dark silicon dies |
 
 #### Verified Contrast Ratios (Observed)
 
@@ -56,27 +56,29 @@ Loaded via Google Fonts in `index.html`:
 | **Supporting Subtitle** | `text-sm sm:text-lg` / `text-base sm:text-xl` | `400` | Single-line architectural statement |
 | **Card / Section Heading** | `text-lg sm:text-xl` | `700` | Domain cards & mechanism headers |
 | **SVG Schematic Text** | `8.5px`–`24px` SVG user units | `600`–`700` | Component blocks, bus signals, registers |
-| **Micro Badges & Counters** | `10px`–`12px` (`font-mono`) | `600`–`700` | Slide index (`01 / 07`), `STAGE`, beat badges |
+| **Micro Badges & Counters** | `10px`–`12px` (`font-mono`) | `600`–`700` | Slide index (`01 / 07`), in-slide stage pills (`Stage 1 / 4`), beat badges |
 
 ---
 
-### 4. Responsive Shell, Framing & Side Motion Graphics
+### 4. Responsive Shell, Framing & Calm Corner Artwork
 
-- **Root Viewport (`PresentationShell.tsx`):** `h-dvh min-h-dvh flex flex-col justify-between` (never rigid `h-screen`), allowing smooth scrolling inside `<main>` (`overflow-y-auto`) on viewports below `lg` (`< 1024px`) and crisp centered `lg:aspect-[16/9]` (`max-w-[1440px] lg:max-h-[810px]`) framing on desktop.
+- **Root Viewport (`PresentationShell.tsx`):** `h-dvh min-h-dvh flex flex-col justify-between` (never rigid `h-screen`), allowing smooth scrolling inside `<main>` (`overflow-y-auto overflow-x-hidden lg:overflow-hidden`) on viewports below `lg` (`< 1024px`) and crisp centered `lg:aspect-[16/9]` (`max-w-[1440px] lg:max-h-[810px]`) framing on desktop.
 - **Stage Gutters & Card Alignment:**
-  - `<main>` applies `px-4 sm:px-10 lg:px-20` horizontal clearance.
-  - Each slide container applies `px-5 sm:px-14 lg:px-24 xl:px-28` around a unified `max-w-[1160px]` grid so left/right side rails never overlap content cards.
-- **Side Motion Graphics (`AnimatedBackground.tsx`):**
-  - Top-right organic sky-blue corner wave (`viewBox="0 0 480 340"`, `preserveAspectRatio="xMaxYMin meet"`) and bottom-left organic corner wave (`viewBox="0 0 520 300"`, `preserveAspectRatio="xMinYMax meet"`).
-  - Left & right architectural circuit rails (`hidden lg:block`, `viewBox="0 0 150 800"`, `xMinYMid meet` / `xMaxYMid meet`, `w-[100px] xl:w-[116px] 2xl:w-[216px]`), never using `slice` cropping, featuring slide-tailored bus topologies, dual micro-chip modules, hexagonal & rotated diamond accents, pulsing nodes, and continuous packet pulses.
+  - `<main>` applies `px-4 sm:px-8 lg:px-10` horizontal clearance.
+  - Each slide container applies `px-5 sm:px-10 lg:px-14 xl:px-16` around a unified `max-w-[1160px]` grid, preserving generous whitespace from corner graphics while giving diagrams and cards full horizontal breathing room.
+- **Calm Corner Artwork (`AnimatedBackground.tsx`, 100% Static):**
+  - `aria-hidden="true"`, `pointer-events-none`, zero GSAP/CSS side-rail loops, and `preserveAspectRatio` ending in `meet` (never `slice`).
+  - **Top-Right (`viewBox="0 0 480 340"`, `xMaxYMin meet`):** Layered soft sky-blue organic waves (`#E6EFFF` / `#D6E5FF` fading into `#2868E8` ~0.22), thin orbital Bezier arc (`#2868E8`, ~0.20–0.24) with one static 45° diamond marker (`7×7`, `rx="1.5"`), and two translucent rounded micro-square tiles (`rx="6"`).
+  - **Bottom-Left (`viewBox="0 0 520 300"`, `xMinYMax meet`):** Soft curved sky-blue layered sweep wave and delicate hairline arc echo.
+  - **Bottom-Right (`viewBox="0 0 280 180"`, `xMaxYMax meet`):** Quiet outer corner whisper accent with subtle per-slide emphasis variation (`opacity: 0.42–0.54`).
 
 ---
 
 ### 5. Interactive Controls & Native Top-Layer Modal
 
 - **Header Chrome:**
-  - `ProgressIndicator.tsx`: `01 / 07` index, `2px` accent bar, `>= 24×24px` (`min-w-6 min-h-6`) clickable slide dots (visible `sm+`), and multi-beat `STAGE` indicator dots.
-  - `SlideNavigation.tsx`: Frosted `.glass-panel` pill housing Overview (`Grid`), Auto-Play (`Play`/`Pause`), Beat Reset (`RotateCcw` when `maxBeats > 1`), Previous/Next chevrons, and Fullscreen toggle.
+  - `ProgressIndicator.tsx`: Minimal `01 / 07` numeric index paired with the thin horizontal `#2868E8` accent bar (`w-8 sm:w-10 md:w-12 h-[2px] rounded-full`), with zero top-bar slide dots and zero top-bar `STAGE` dot circles (multi-beat stage indicators remain inside Slide 03 and Slide 04 cards).
+  - `SlideNavigation.tsx`: Frosted `.glass-panel` pill housing `32×32px` (`>= 24×24px`) `IconButton` controls for Overview (`Grid`), Auto-Play (`Play`/`Pause`), Beat Reset (`RotateCcw` when `maxBeats > 1`), Previous/Next chevrons, and Fullscreen toggle.
 - **Slide Overview Modal (`SlideOverview.tsx`):**
   - Built on native `<dialog>` opened via `dialogRef.current?.showModal()`.
   - Uses `closedby="any"` plus a progressive `pointerdown`/`pointerup` bounding-rect fallback for browsers without `closedBy` support.
